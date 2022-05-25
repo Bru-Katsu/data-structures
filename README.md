@@ -6,3 +6,4 @@ Um repositório para registrar os meus estudos voltados a escrita de estrutura d
 ## Implementações
 
 - Pilha Genérica
+- Fila Genérica
