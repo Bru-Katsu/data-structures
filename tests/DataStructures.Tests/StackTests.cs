@@ -7,7 +7,7 @@ namespace DataStructures.Tests
     public class StackTests
     {
         [Fact(DisplayName = "Ao empilhar, o elemento deve estar no topo")]
-        [Trait("Stack", "Empilhar")]
+        [Trait(nameof(Stack<int>), nameof(Stack<int>.Push))]
         public void Empilhar_PilhaVazia_ElementoDeveEstarNoTopo()
         {
             //arrange
@@ -23,7 +23,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Tamanho da pilha deve ser igual a quantidade de empilhamentos")]
-        [Trait("Stack", "Empilhar")]
+        [Trait(nameof(Stack<int>), nameof(Stack<int>.Push))]
         public void Empilhar_PilhaComItens_TamanhoDeveSerIgualAQuantidadeDeEmpilhamentos()
         {
             //arrange
@@ -43,7 +43,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao Empilhar mais itens do que o tamanho definido, deve estourar exception")]
-        [Trait("Stack", "Empilhar")]        
+        [Trait(nameof(Stack<int>), nameof(Stack<int>.Push))]
         public void Empilhar_PilhaComTamanho_DeveEstourarExceptionAoExceder()
         {
             //arrange
@@ -56,12 +56,12 @@ namespace DataStructures.Tests
             pilha.Push(randomizer.Next());
             pilha.Push(randomizer.Next());
 
-            //act
+            //act & assert
             Assert.Throws<ArgumentOutOfRangeException>(() => pilha.Push(randomizer.Next()));
         }
 
         [Fact(DisplayName = "Ao tentar desempilhar uma pilha vazia, deve estourar exception")]
-        [Trait("Stack", "Desempilhar")]
+        [Trait(nameof(Stack<int>), nameof(Stack<int>.Pop))]
         public void Desempilhar_PilhaVazia_DeveEstourarException()
         {
             //arrange
@@ -72,7 +72,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao desempilhar o último elemento, a pilha deve estar vazia")]
-        [Trait("Stack", "Desempilhar")]
+        [Trait(nameof(Stack<int>), nameof(Stack<int>.Pop))]
         public void Desempilhar_PilhaComUmItem_DeveFicarVazia()
         {
             //arrange
@@ -87,7 +87,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao desempilhar, deve retornar o último elemento da pilha")]
-        [Trait("Stack", "Desempilhar")]
+        [Trait(nameof(Stack<int>), nameof(Stack<int>.Pop))]
         public void Desempilhar_PilhaComItens_DeveRetornarUltimoItem()
         {
             //arrange
@@ -110,7 +110,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao criar uma pilha com a capacidade negativa, deve estourar exception")]
-        [Trait("Stack", "Instânciar")]
+        [Trait(nameof(Stack<int>), "Instânciar")]
         public void Instanciar_PilhaComCapacidadeNegativa_DeveEstourarException()
         {
             //arrange
@@ -121,7 +121,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao criar uma pilha sem itens, o tamanho deve ser igual a zero")]
-        [Trait("Stack", "Instânciar")]
+        [Trait(nameof(Stack<int>), "Instânciar")]
         public void Instanciar_PilhaSemItens_TamanhoDeveSerZero()
         {
             //arrange
