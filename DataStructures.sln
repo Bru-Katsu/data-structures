@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataStructures", "DataStructures\DataStructures.csproj", "{E7E144E1-531D-4EC7-BB85-4557F803A8F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataStructures", "src\DataStructures\DataStructures.csproj", "{E7E144E1-531D-4EC7-BB85-4557F803A8F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataStructures.Tests", "DataStructures.Tests\DataStructures.Tests.csproj", "{58134B90-976A-4EE8-99A7-0577F0100C70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataStructures.Tests", "tests\DataStructures.Tests\DataStructures.Tests.csproj", "{58134B90-976A-4EE8-99A7-0577F0100C70}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F3E2C20D-D2D7-4272-AE94-FC0BC6FA5361}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1982C086-9874-4D9B-B006-A0A7D2714B79}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +28,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E7E144E1-531D-4EC7-BB85-4557F803A8F8} = {F3E2C20D-D2D7-4272-AE94-FC0BC6FA5361}
+		{58134B90-976A-4EE8-99A7-0577F0100C70} = {1982C086-9874-4D9B-B006-A0A7D2714B79}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1D013E4D-102B-458E-AC15-490D34E44ABC}
