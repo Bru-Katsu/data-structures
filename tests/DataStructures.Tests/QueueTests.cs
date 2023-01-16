@@ -7,7 +7,7 @@ namespace DataStructures.Tests
     public class QueueTests
     {
         [Fact(DisplayName = "Ao espiar, deve retornar o primeiro elemento da fila")]
-        [Trait("Queue", "Espiar")]
+        [Trait(nameof(Queue<int>), nameof(Queue<int>.Peek))]
         public void Espiar_FilaComItens_DeveRetornarPrimeiroElementoDaFila()
         {
             //arrange
@@ -25,7 +25,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao enfileirar, o tamanho da fila deve ser incrementado")]
-        [Trait("Queue", "Enfileirar")]
+        [Trait(nameof(Queue<int>), nameof(Queue<int>.Enqueue))]
         public void Enfileirar_NovaFila_DeveIncrementarTamanho()
         {
             //arrange
@@ -41,7 +41,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao enfileirar, a fila não pode ser vazia")]
-        [Trait("Queue", "Enfileirar")]
+        [Trait(nameof(Queue<int>), nameof(Queue<int>.Enqueue))]
         public void Enfileirar_NovaFila_NaoPodeSerVazia()
         {
             //arrange
@@ -55,7 +55,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao desenfileirar, deve retornar o primeiro elemento adicionado")]
-        [Trait("Queue", "Desenfileirar")]
+        [Trait(nameof(Queue<int>), nameof(Queue<int>.Dequeue))]
         public void Desenfileirar_FilaComItens_DeveRetornarPrimeiroElementoDaFila()
         {
             //arrange
@@ -77,7 +77,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao desenfileirar todos os itens, a fila deve estar vazia")]
-        [Trait("Queue", "Desenfileirar")]
+        [Trait(nameof(Queue<int>), nameof(Queue<int>.Dequeue))]
         public void Desenfileirar_FilaComItens_DeveEstarVazia()
         {
             //arrange
@@ -98,7 +98,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao criar uma fila com a capacidade negativa, deve estourar exception")]
-        [Trait("Queue", "Instânciar")]
+        [Trait(nameof(Queue<int>), "Instânciar")]
         public void Instanciar_FilaComCapacidadeNegativa_DeveEstourarException()
         {
             //arrange
@@ -109,7 +109,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao criar uma fila, o tamanho deve ser zero")]
-        [Trait("Queue", "Instânciar")]
+        [Trait(nameof(Queue<int>), "Instânciar")]
         public void Instanciar_FilaSemItens_TamanhoDeveSerZero()
         {
             //arrange & act
@@ -119,31 +119,6 @@ namespace DataStructures.Tests
             //assert
             Assert.Equal(0, filaSemCapacidade.Size);
             Assert.Equal(0, filaComCapacidade.Size);
-        }
-
-        [Fact(DisplayName = "Ao criar um array a partir da fila, deve respeitar a mesma ordem interna")]
-        [Trait("Queue", "ToArray")]
-        public void ConverterArray_FilaComItens_DeveTerAMesmaSequenciaDeItens()
-        {
-            //arrange
-            var fila = new Queue<int>();
-
-            fila.Enqueue(1);
-            fila.Enqueue(2);
-            fila.Enqueue(3);
-            fila.Enqueue(4);
-            fila.Enqueue(5);
-            fila.Enqueue(6);
-
-            //act
-            var arr = fila.ToArray();
-
-            //assert
-            for (int index = 0; index < fila.Size; index++)
-            {
-                var value = fila.Dequeue();
-                Assert.Equal(value, arr[index]);
-            }
         }
     }
 }

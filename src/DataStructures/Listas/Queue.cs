@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 namespace DataStructures.Listas
 {
     [ComVisible(true)]
-    [Serializable]
     public class Queue<T> : IEnumerable<T>
     {
         public Queue()
@@ -35,7 +34,10 @@ namespace DataStructures.Listas
         public int Size => _internalSize;
         public bool IsEmpty => Size == 0;
 
-        //O(1)
+        /// <summary>
+        /// Complexidade de O(1)
+        /// </summary>
+        /// <returns></returns>
         public T Peek()
         {
             if(IsEmpty)
@@ -60,7 +62,10 @@ namespace DataStructures.Listas
             _internalSize++;
         }
 
-        //O(1)
+        /// <summary>
+        /// Complexidade de O(1)
+        /// </summary>
+        /// <returns></returns>
         public T Dequeue()
         {
             if (IsEmpty)
@@ -75,10 +80,9 @@ namespace DataStructures.Listas
             return dequeued;
         }
 
-        //O(n)
-        public void Trim() => Redimensionate(_internalSize);
+        //TODO: reavaliar esse método
+        //public void Trim() => Redimensionate(_internalSize);
 
-        //O(n)
         private void Expand()
         {
             int newCapacity = (int)((long)_storage.Length * 2 / 100);
@@ -90,15 +94,6 @@ namespace DataStructures.Listas
             Redimensionate(newCapacity);
         }
 
-        public T[] ToArray()
-        {
-            T[] array = new T[_internalSize];
-            Array.Copy(_storage, array, _internalSize);
-
-            return array;
-        }
-
-        //O(n)
         private void Redimensionate(int toCapacity)
         {
             var newStorage = new T[toCapacity];
@@ -118,14 +113,44 @@ namespace DataStructures.Listas
             _tail = (_internalSize == toCapacity) ? 0 : _internalSize;
         }
 
+        #region Enumerable
         public IEnumerator<T> GetEnumerator()
         {
-            return _storage.AsEnumerable().GetEnumerator();
+            return new QueueEnumerator<T>(_storage);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _storage.GetEnumerator();
+            return new QueueEnumerator<T>(_storage);
         }
+
+        private class QueueEnumerator<T> : IEnumerator<T>
+        {
+            private readonly T[] _queue;
+            private int _index = -1;
+
+            public QueueEnumerator(T[] queue)
+            {
+                _queue = queue;
+            }
+
+            public T Current => _queue[_index];
+
+            object IEnumerator.Current => Current;
+
+            public void Dispose() { }
+
+            public bool MoveNext()
+            {
+                _index++;
+                return _index < _queue.Length;                
+            }
+
+            public void Reset()
+            {
+                _index = -1;
+            }
+        }
+        #endregion
     }
 }
