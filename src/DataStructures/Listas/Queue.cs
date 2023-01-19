@@ -124,17 +124,17 @@ namespace DataStructures.Listas
             return new QueueEnumerator<T>(_storage);
         }
 
-        private class QueueEnumerator<T> : IEnumerator<T>
+        private class QueueEnumerator<Type> : IEnumerator<Type>
         {
-            private readonly T[] _queue;
+            private readonly Type[] _queue;
             private int _index = -1;
 
-            public QueueEnumerator(T[] queue)
+            public QueueEnumerator(Type[] queue)
             {
                 _queue = queue;
             }
 
-            public T Current => _queue[_index];
+            public Type Current => _queue[_index];
 
             object IEnumerator.Current => Current;
 

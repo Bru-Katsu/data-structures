@@ -92,17 +92,17 @@ namespace DataStructures.Listas
             return new StackEnumerator<T>(_storage);
         }
 
-        private class StackEnumerator<T> : IEnumerator<T>
+        private class StackEnumerator<Type> : IEnumerator<Type>
         {
-            private readonly T[] _stackedStorage;
+            private readonly Type[] _stackedStorage;
             private int _tail;
-            public StackEnumerator(T[] stackedStorage)
+            public StackEnumerator(Type[] stackedStorage)
             {
                 _stackedStorage = stackedStorage;
                 _tail = _stackedStorage.Length - 1;
             }
 
-            public T Current => _stackedStorage[_tail];
+            public Type Current => _stackedStorage[_tail];
 
             object IEnumerator.Current => Current;
 
