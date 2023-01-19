@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace DataStructures.Listas
 {
     [ComVisible(true)]
-    public class LinkedList<T> : IEnumerable<T>, ICollection<T>
+    public class LinkedList<T> : IEnumerable<T>
     {
         private int _lenght;
         private LinkedNode<T> _head;
@@ -28,14 +28,13 @@ namespace DataStructures.Listas
         }
 
         public int Count => _lenght;
-        public bool IsReadOnly => false;
 
         /// <summary>
         /// <para>Adiciona um valor ao final da lista</para>
         /// <para>Complexidade de O(1)</para>
         /// </summary>
         /// <param name="value"></param>
-        public void Append(T value)
+        public void AddLast(T value)
         {
             if (_tail == null)
             {
@@ -53,7 +52,7 @@ namespace DataStructures.Listas
         /// <para>Complexidade de O(1)</para>
         /// </summary>
         /// <param name="value"></param>
-        public void Prepend(T value)
+        public void AddFirst(T value)
         {
             if (_head == null)
             {
@@ -75,29 +74,23 @@ namespace DataStructures.Listas
         /// <param name="value"></param>
         public void InsertAt(int position, T value)
         {
-            ThrowIfInvalid(position);
+            ThrowIfGreaterThanPositionsRange(position);
 
             if (_head == null)
                 Initialize(value);
             else if (position == 0)
-                Prepend(value);
-            else if (position == _lenght)
-                Append(value);
+                AddFirst(value);
             else
             {
-                LinkedNode<T> currentNode = _head;
-                LinkedNode<T>? beforeNode = default;
-
-                for (int i = 1; i <= position; i++)
-                {
-                    beforeNode = currentNode;
-                    currentNode = currentNode.Next;
-                }
+                LinkedNode<T>? previousNode = TraverseTo(position - 1);
+                LinkedNode<T> currentNode = previousNode.Next;
 
                 var newNode = new LinkedNode<T>(value);
 
                 newNode.SetNext(currentNode);
-                beforeNode?.SetNext(newNode);
+                previousNode?.SetNext(newNode);
+
+                _lenght++;
             }
         }
 
@@ -108,18 +101,13 @@ namespace DataStructures.Listas
         /// <param name="value"></param>
         public void RemoveAt(int position)
         {
-            ThrowIfInvalid(position);
+            ThrowIfNotInPositionsRange(position);
 
-            LinkedNode<T> currentNode = _head;
-            LinkedNode<T>? beforeNode = default;
+            LinkedNode<T>? previousNode = TraverseTo(position - 1);
+            LinkedNode<T> currentNode = previousNode.Next;
 
-            for (int i = 1; i <= position; i++)
-            {
-                beforeNode = currentNode;
-                currentNode = currentNode.Next;
-            }
-
-            beforeNode?.SetNext(currentNode.Next);
+            previousNode?.SetNext(currentNode.Next);
+            _lenght--;
         }
 
         /// <summary>
@@ -129,20 +117,73 @@ namespace DataStructures.Listas
         /// <param name="value"></param>
         public T GetValueAt(int position)
         {
-            ThrowIfInvalid(position);
+            ThrowIfNotInPositionsRange(position);
 
             if (position == 0 || _head.Next == null)
                 return _head.Value;
 
+            var currentNode = TraverseTo(position);
+
+            return currentNode.Value;
+        }
+        
+        /// <summary>
+        /// Inverte a lista
+        /// </summary>
+        public void Reverse()
+        {
+            LinkedNode<T> current = _head, newTail = _head;
+            LinkedNode<T> previous = default, next = default;
+
+            while (current != null)
+            {
+                next = current.Next;
+
+                current.SetNext(previous);
+
+                previous = current;
+                current = next;
+            }
+
+            _head = previous;
+            _tail = newTail;
+        }
+
+        private void Initialize(T value)
+        {
+            _head = new LinkedNode<T>(value);
+            _tail = _head;
+            _lenght++;
+        }
+
+        private void ThrowIfGreaterThanPositionsRange(int position)
+        {
+            if (position < 0)
+                throw new ArgumentOutOfRangeException(nameof(position), "Não é permitido posições negativas!");
+
+            if (position > _lenght)
+                throw new ArgumentOutOfRangeException(nameof(position), "Posição fora do tamanho da lista!");
+        }
+
+        private void ThrowIfNotInPositionsRange(int position)
+        {
+            if (position < 0)
+                throw new ArgumentOutOfRangeException(nameof(position), "Não é permitido posições negativas!");
+
+            if (position > _lenght - 1)
+                throw new ArgumentOutOfRangeException(nameof(position), "Posição fora do tamanho da lista!");
+        }
+
+        private LinkedNode<T> TraverseTo(int position)
+        {
             var currentNode = _head;
 
             for (int i = 1; i <= position; i++)
                 currentNode = currentNode.Next;
 
-            return currentNode.Value;
+            return currentNode;
         }
 
-        #region Collection        
         /// <summary>
         /// <para>Adiciona um valor ao fim da lista</para>
         /// <para>Complexidade de O(1)</para>
@@ -150,54 +191,8 @@ namespace DataStructures.Listas
         /// <param name="value"></param>
         public void Add(T item)
         {
-            Append(item);
+            AddLast(item);
         }
-
-        /// <summary>
-        /// Limpa lista
-        /// </summary>
-        public void Clear()
-        {
-            _head = null;
-            _tail = null;
-        }
-
-        public bool Contains(T item)
-        {
-            var node = _head;
-            while(node != null)
-            {
-                if (node.Value.Equals(item))
-                {
-                    return true;
-                }
-
-                node = node.Next;
-            }
-
-            return false;
-        }
-
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-            ThrowIfInvalid(arrayIndex);
-
-            var node = _head;
-            for (int i = 0; i < _lenght; i++)
-            {
-                if (i < arrayIndex)
-                    continue;
-
-                array[i] = node.Value;
-                node = node.Next;
-            }
-        }
-
-        public bool Remove(T item)
-        {
-            throw new NotImplementedException();
-        }
-        #endregion
 
         #region Enumerable
         public IEnumerator<T> GetEnumerator()
@@ -210,17 +205,17 @@ namespace DataStructures.Listas
             return new LinkedListEnumerator<T>(_head);
         }
 
-        private class LinkedListEnumerator<T> : IEnumerator<T>
+        private class LinkedListEnumerator<Type> : IEnumerator<Type>
         {
-            private readonly LinkedNode<T> _head;
-            private LinkedNode<T> _current = default;
-            public LinkedListEnumerator(LinkedNode<T> node)
+            private readonly LinkedNode<Type> _head;
+            private LinkedNode<Type> _current = default;
+            public LinkedListEnumerator(LinkedNode<Type> node)
             {
                 _head = node;
                 _current = default;
             }
 
-            public T Current => _current.Value;
+            public Type Current => _current.Value;
 
             object IEnumerator.Current => Current;
 
@@ -246,34 +241,18 @@ namespace DataStructures.Listas
         }
         #endregion
 
-        private void Initialize(T value)
-        {
-            _head = new LinkedNode<T>(value);
-            _tail = _head;
-            _lenght++;
-        }
-
-        private void ThrowIfInvalid(int position)
-        {
-            if (position < 0)
-                throw new ArgumentOutOfRangeException(nameof(position), "Não é permitido posições negativas!");
-
-            if (position > _lenght)
-                throw new ArgumentOutOfRangeException(nameof(position), "Posição fora do tamanho da lista!");
-        }
-
         #region Types
-        private class LinkedNode<T>
+        private class LinkedNode<Type>
         {
-            public LinkedNode(T value)
+            public LinkedNode(Type value)
             {
                 Value = value;
             }
 
-            public T Value { get; }
+            public Type Value { get; }
 
-            public LinkedNode<T> Next { get; private set; }
-            internal void SetNext(LinkedNode<T> node)
+            public LinkedNode<Type> Next { get; private set; }
+            internal void SetNext(LinkedNode<Type> node)
             {
                 Next = node;
             }
