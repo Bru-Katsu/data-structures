@@ -20,7 +20,7 @@ namespace DataStructures.Tests
 
             //act
             list.AddLast(16);
-            var retorno = list.GetValueAt(list.Count - 1);
+            var retorno = list.GetItemAt(list.Count - 1);
 
             //assert            
             Assert.Equal(16, retorno);
@@ -54,7 +54,7 @@ namespace DataStructures.Tests
             //act
             list.AddFirst(16);
 
-            var retorno = list.GetValueAt(0);
+            var retorno = list.GetItemAt(0);
 
             //assert            
             Assert.Equal(16, retorno);
@@ -91,7 +91,7 @@ namespace DataStructures.Tests
 
             //act
             list.InsertAt(posicao, valor);
-            var retorno = list.GetValueAt(posicao);
+            var retorno = list.GetItemAt(posicao);
 
             //assert            
             Assert.Equal(valor, retorno);

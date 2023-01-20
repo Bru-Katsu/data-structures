@@ -11,56 +11,39 @@ namespace DataStructures.Listas
         private LinkedNode<T> _tail;
 
         public LinkedList() { }
-        public LinkedList(T value)
+        public LinkedList(T item)
         {
-            Initialize(value);
+            Initialize(item);
         }
 
         /// <summary>
         /// Obtém ou insere valores na lista
         /// </summary>
-        /// <param name="position">posição</param>
+        /// <param name="index">posição</param>
         /// <returns><see cref="T"/></returns>
-        public T this[int position]
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public T this[int index]
         {
-            get => GetValueAt(position);
-            set => InsertAt(position, value);
+            get => GetItemAt(index);
+            set => InsertAt(index, value);
         }
 
         public int Count => _lenght;
 
         /// <summary>
-        /// <para>Adiciona um valor ao final da lista</para>
-        /// <para>Complexidade de O(1)</para>
-        /// </summary>
-        /// <param name="value"></param>
-        public void AddLast(T value)
-        {
-            if (_tail == null)
-            {
-                Initialize(value);
-                return;
-            }
-
-            _tail.SetNext(new LinkedNode<T>(value));
-            _tail = _tail.Next;
-            _lenght++;
-        }
-
-        /// <summary>
         /// <para>Adiciona um valor no início da lista</para>
         /// <para>Complexidade de O(1)</para>
         /// </summary>
-        /// <param name="value"></param>
-        public void AddFirst(T value)
+        /// <param name="item"></param>
+        public void AddFirst(T item)
         {
             if (_head == null)
             {
-                Initialize(value);
+                Initialize(item);
                 return;
             }
 
-            var currentNode = new LinkedNode<T>(value);
+            var currentNode = new LinkedNode<T>(item);
             currentNode.SetNext(_head);
 
             _head = currentNode;
@@ -68,24 +51,43 @@ namespace DataStructures.Listas
         }
 
         /// <summary>
+        /// <para>Adiciona um valor ao final da lista</para>
+        /// <para>Complexidade de O(1)</para>
+        /// </summary>
+        /// <param name="item"></param>
+        public void AddLast(T item)
+        {
+            if (_tail == null)
+            {
+                Initialize(item);
+                return;
+            }
+
+            _tail.SetNext(new LinkedNode<T>(item));
+            _tail = _tail.Next;
+            _lenght++;
+        }
+
+        /// <summary>
         /// <para>Adiciona um valor na posição informada</para>
         /// <para>Complexidade de O(n)</para>
         /// </summary>
-        /// <param name="value"></param>
-        public void InsertAt(int position, T value)
+        /// <param name="item"></param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public void InsertAt(int index, T item)
         {
-            ThrowIfGreaterThanPositionsRange(position);
+            ThrowIfGreaterThanIndexRange(index);
 
             if (_head == null)
-                Initialize(value);
-            else if (position == 0)
-                AddFirst(value);
+                Initialize(item);
+            else if (index == 0)
+                AddFirst(item);
             else
             {
-                LinkedNode<T>? previousNode = TraverseTo(position - 1);
+                LinkedNode<T>? previousNode = TraverseTo(index - 1);
                 LinkedNode<T> currentNode = previousNode.Next;
 
-                var newNode = new LinkedNode<T>(value);
+                var newNode = new LinkedNode<T>(item);
 
                 newNode.SetNext(currentNode);
                 previousNode?.SetNext(newNode);
@@ -95,19 +97,77 @@ namespace DataStructures.Listas
         }
 
         /// <summary>
+        /// <para>Remove o primeiro valor da lista</para>
+        /// <para>Complexidade de O(1)</para>
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
+        public void RemoveFirst()
+        {
+            if (_head == null)
+                throw new InvalidOperationException("Não há itens na lista!");
+
+            if (_head.Next == null)
+            {
+                _head = null;
+                return;
+            }
+            else
+            {
+                var next = _head.Next;
+                _head = null;
+                _head = next;
+            }
+
+            _lenght--;
+        }
+
+        /// <summary>
+        /// <para>Remove o último valor da lista</para>
+        /// <para>Complexidade de O(n)</para>
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
+        public void RemoveLast()
+        {
+            if (_tail == null)
+                throw new InvalidOperationException("Não há itens na lista!");
+
+            if (_head.Next == null && _lenght == 1)
+            {
+                _tail = null;
+            }
+            else
+            {
+                var beforeLast = TraverseTo(_lenght - 2);
+
+                _tail = null;
+                _tail = beforeLast;
+            }
+
+            _lenght--;
+        }
+
+        /// <summary>
         /// <para>Remove valor na posição informada</para>
         /// <para>Complexidade de O(n)</para>
         /// </summary>
         /// <param name="value"></param>
-        public void RemoveAt(int position)
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public void RemoveAt(int index)
         {
-            ThrowIfNotInPositionsRange(position);
+            ThrowIfNotInIndexRange(index);
 
-            LinkedNode<T>? previousNode = TraverseTo(position - 1);
-            LinkedNode<T> currentNode = previousNode.Next;
+            if (index == 0)
+                RemoveFirst();
+            else if (index == _lenght - 1)
+                RemoveLast();
+            else
+            {
+                LinkedNode<T>? previousNode = TraverseTo(index - 1);
+                LinkedNode<T> currentNode = previousNode.Next;
 
-            previousNode?.SetNext(currentNode.Next);
-            _lenght--;
+                previousNode?.SetNext(currentNode.Next);
+                _lenght--;
+            }
         }
 
         /// <summary>
@@ -115,20 +175,22 @@ namespace DataStructures.Listas
         /// <para>Complexidade de O(n)</para>
         /// </summary>
         /// <param name="value"></param>
-        public T GetValueAt(int position)
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public T GetItemAt(int index)
         {
-            ThrowIfNotInPositionsRange(position);
+            ThrowIfNotInIndexRange(index);
 
-            if (position == 0 || _head.Next == null)
+            if (index == 0 || _head.Next == null)
                 return _head.Value;
 
-            var currentNode = TraverseTo(position);
+            var currentNode = TraverseTo(index);
 
             return currentNode.Value;
         }
-        
+
         /// <summary>
-        /// Inverte a lista
+        /// <para>Inverte a lista</para>
+        /// <para>Complexidade de O(n)</para>
         /// </summary>
         public void Reverse()
         {
@@ -149,29 +211,40 @@ namespace DataStructures.Listas
             _tail = newTail;
         }
 
-        private void Initialize(T value)
+        /// <summary>
+        /// <para>Limpa a lista</para>
+        /// <para>Complexidade de O(n)</para>
+        /// </summary>
+        public void Clear()
         {
-            _head = new LinkedNode<T>(value);
+            _head = null;
+            _tail = null;
+            _lenght = 0;
+        }
+
+        private void Initialize(T item)
+        {
+            _head = new LinkedNode<T>(item);
             _tail = _head;
             _lenght++;
         }
 
-        private void ThrowIfGreaterThanPositionsRange(int position)
+        private void ThrowIfGreaterThanIndexRange(int index)
         {
-            if (position < 0)
-                throw new ArgumentOutOfRangeException(nameof(position), "Não é permitido posições negativas!");
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index), "Não é permitido posições negativas!");
 
-            if (position > _lenght)
-                throw new ArgumentOutOfRangeException(nameof(position), "Posição fora do tamanho da lista!");
+            if (index > _lenght)
+                throw new ArgumentOutOfRangeException(nameof(index), "Posição fora do tamanho da lista!");
         }
 
-        private void ThrowIfNotInPositionsRange(int position)
+        private void ThrowIfNotInIndexRange(int index)
         {
-            if (position < 0)
-                throw new ArgumentOutOfRangeException(nameof(position), "Não é permitido posições negativas!");
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index), "Não é permitido posições negativas!");
 
-            if (position > _lenght - 1)
-                throw new ArgumentOutOfRangeException(nameof(position), "Posição fora do tamanho da lista!");
+            if (index > _lenght - 1)
+                throw new ArgumentOutOfRangeException(nameof(index), "Posição fora do tamanho da lista!");
         }
 
         private LinkedNode<T> TraverseTo(int position)

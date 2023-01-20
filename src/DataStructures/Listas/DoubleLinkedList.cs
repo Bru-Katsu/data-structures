@@ -13,36 +13,37 @@ namespace DataStructures.Listas
         /// <summary>
         /// Obtém ou insere valores na lista
         /// </summary>
-        /// <param name="position">posição</param>
+        /// <param name="index">posição</param>
         /// <returns><see cref="T"/></returns>
-        public T this[int position]
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public T this[int index]
         {
-            get => GetValueAt(position);
-            set => InsertAt(position, value);
+            get => GetItemAt(index);
+            set => InsertAt(index, value);
         }
 
         public int Count => _lenght;
 
         public DoubleLinkedList() { }
-        public DoubleLinkedList(T value)
+        public DoubleLinkedList(T item)
         {
-            Initialize(value);
+            Initialize(item);
         }
 
         /// <summary>
         /// <para>Adiciona um valor ao final da lista</para>
         /// <para>Complexidade de O(1)</para>
         /// </summary>
-        /// <param name="value"></param>
-        public void AddLast(T value)
+        /// <param name="item"></param>
+        public void AddLast(T item)
         {
             if (_tail == null)
             {
-                Initialize(value);
+                Initialize(item);
                 return;
             }
 
-            var newNode = new DoubleLinkedNode<T>(value, _tail);
+            var newNode = new DoubleLinkedNode<T>(item, _tail);
 
             _tail.SetNext(newNode);
             _tail = _tail.Next;
@@ -54,16 +55,16 @@ namespace DataStructures.Listas
         /// <para>Adiciona um valor no início da lista</para>
         /// <para>Complexidade de O(1)</para>
         /// </summary>
-        /// <param name="value"></param>
-        public void AddFirst(T value)
+        /// <param name="item"></param>
+        public void AddFirst(T item)
         {
             if (_head == null)
             {
-                Initialize(value);
+                Initialize(item);
                 return;
             }
 
-            var newNode = new DoubleLinkedNode<T>(value);
+            var newNode = new DoubleLinkedNode<T>(item);
             newNode.SetNext(_head);
             _head.SetPrevious(newNode);
             _head = newNode;
@@ -75,24 +76,24 @@ namespace DataStructures.Listas
         /// <para>Adiciona um valor na posição informada</para>
         /// <para>Complexidade de O(n)</para>
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="item"></param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public void InsertAt(int position, T value)
+        public void InsertAt(int index, T item)
         {
-            ThrowIfGreaterThanPositionsRange(position);
+            ThrowIfGreaterThanIndexRange(index);
 
             if (_head == null)
-                Initialize(value);
-            else if (position == 0)
-                AddFirst(value);
-            else if (position == _lenght)
-                AddLast(value);
+                Initialize(item);
+            else if (index == 0)
+                AddFirst(item);
+            else if (index == _lenght)
+                AddLast(item);
             else
             {
-                DoubleLinkedNode<T> previousNode = TraverseTo(position - 1);
+                DoubleLinkedNode<T> previousNode = TraverseTo(index - 1);
                 DoubleLinkedNode<T> currentNode = previousNode.Next;
 
-                var newNode = new DoubleLinkedNode<T>(value);
+                var newNode = new DoubleLinkedNode<T>(item);
 
                 previousNode?.SetNext(newNode);
 
@@ -106,22 +107,83 @@ namespace DataStructures.Listas
         }
 
         /// <summary>
+        /// <para>Remove o primeiro valor da lista</para>
+        /// <para>Complexidade de O(1)</para>
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
+        public void RemoveFirst()
+        {
+            if (_head == null)
+                throw new InvalidOperationException("Não há itens na lista!");
+
+            if (_head.Next == null)
+            {
+                _head = null;
+                return;
+            }
+            else
+            {
+                var next = _head.Next;
+                next.SetPrevious(null);
+
+                _head = null;
+                _head = next;
+            }
+
+            _lenght--;
+        }
+
+        /// <summary>
+        /// <para>Remove o último valor da lista</para>
+        /// <para>Complexidade de O(1)</para>
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
+        public void RemoveLast()
+        {
+            if (_tail == null)
+                throw new InvalidOperationException("Não há itens na lista!");
+
+            if (_tail.Previous == null)
+            {
+                _tail = null;
+                return;
+            }
+            else
+            {
+                var previous = _tail.Previous;
+                previous.SetNext(null);
+
+                _tail = null;
+                _tail = previous;
+            }
+
+            _lenght--;
+        }
+
+        /// <summary>
         /// <para>Remove valor na posição informada</para>
         /// <para>Complexidade de O(n)</para>
         /// </summary>
         /// <param name="value"></param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public void RemoveAt(int position)
+        public void RemoveAt(int index)
         {
-            ThrowIfNotInPositionsRange(position);
+            ThrowIfNotInIndexRange(index);
 
-            DoubleLinkedNode<T> previousNode = TraverseTo(position - 1);
-            DoubleLinkedNode<T> currentNode = previousNode.Next;
+            if (index == 0)
+                RemoveFirst();
+            else if (index == _lenght - 1)
+                RemoveLast();
+            else
+            {
+                DoubleLinkedNode<T> previousNode = TraverseTo(index - 1);
+                DoubleLinkedNode<T> currentNode = previousNode.Next;
 
-            previousNode?.SetNext(currentNode.Next);
-            currentNode.Next.SetPrevious(previousNode);
+                previousNode?.SetNext(currentNode.Next);
+                currentNode.Next.SetPrevious(previousNode);
 
-            _lenght--;
+                _lenght--;
+            }
         }
 
         /// <summary>
@@ -130,21 +192,37 @@ namespace DataStructures.Listas
         /// </summary>
         /// <param name="value"></param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public T GetValueAt(int position)
+        public T GetItemAt(int index)
         {
-            ThrowIfNotInPositionsRange(position);
+            ThrowIfNotInIndexRange(index);
 
-            if (position == 0 || _head.Next == null)
+            if (index == 0 || _head.Next == null)
                 return _head.Value;
 
-            var currentNode = TraverseTo(position);
+            var currentNode = TraverseTo(index);
 
             return currentNode.Value;
         }
 
+        /// <summary>
+        /// <para>Adiciona um valor ao final da lista</para>
+        /// <para>Complexidade de O(1)</para>
+        /// </summary>
+        /// <param name="value"></param>
         public void Add(T item)
         {
             AddLast(item);
+        }
+
+        /// <summary>
+        /// <para>Limpa a lista</para>
+        /// <para>Complexidade de O(n)</para>
+        /// </summary>
+        public void Clear()
+        {
+            _head = null;
+            _tail = null;
+            _lenght = 0;
         }
 
         #region Enumerable
@@ -200,32 +278,32 @@ namespace DataStructures.Listas
             _lenght++;
         }
 
-        private DoubleLinkedNode<T> TraverseTo(int position)
+        private DoubleLinkedNode<T> TraverseTo(int index)
         {
             var currentNode = _head;
 
-            for (int i = 1; i <= position; i++)
+            for (int i = 1; i <= index; i++)
                 currentNode = currentNode.Next;
 
             return currentNode;
         }
 
-        private void ThrowIfGreaterThanPositionsRange(int position)
+        private void ThrowIfGreaterThanIndexRange(int index)
         {
-            if (position < 0)
-                throw new ArgumentOutOfRangeException(nameof(position), "Não é permitido posições negativas!");
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index), "Não é permitido posições negativas!");
 
-            if (position > _lenght)
-                throw new ArgumentOutOfRangeException(nameof(position), "Posição fora do tamanho da lista!");
+            if (index > _lenght)
+                throw new ArgumentOutOfRangeException(nameof(index), "Posição fora do tamanho da lista!");
         }
 
-        private void ThrowIfNotInPositionsRange(int position)
+        private void ThrowIfNotInIndexRange(int index)
         {
-            if (position < 0)
-                throw new ArgumentOutOfRangeException(nameof(position), "Não é permitido posições negativas!");
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index), "Não é permitido posições negativas!");
 
-            if (position > _lenght - 1)
-                throw new ArgumentOutOfRangeException(nameof(position), "Posição fora do tamanho da lista!");
+            if (index > _lenght - 1)
+                throw new ArgumentOutOfRangeException(nameof(index), "Posição fora do tamanho da lista!");
         }
 
         private class DoubleLinkedNode<Type>
