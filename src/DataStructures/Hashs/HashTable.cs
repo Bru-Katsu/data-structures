@@ -1,16 +1,18 @@
 ﻿using DataStructures.Extensions;
 using System.Collections;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace DataStructures.Hashs
 {
     [ComVisible(true)]
     public class HashTable<T> : IEnumerable<T>
     {
-        private readonly Bucket<T>[] _table;
+        private int _count = 0;
+        private readonly HashBucket<T>[] _table;
         public HashTable(int size)
         {
-            _table = new Bucket<T>[size];
+            _table = new HashBucket<T>[size];
         }
 
         /// <summary>
@@ -25,6 +27,11 @@ namespace DataStructures.Hashs
         }
 
         /// <summary>
+        /// Quantidade de itens
+        /// </summary>
+        public int Count => _count;
+
+        /// <summary>
         /// Gera hash de acordo com a key. Pretendo melhorar isso futuramente.
         /// </summary>
         /// <param name="key"></param>
@@ -32,18 +39,16 @@ namespace DataStructures.Hashs
         private int GenerateHashCode(string key)
         {
             int hash = 0;
+
             for (var i = 0; i < key.Length; i++)
-            {
                 hash = (hash + key.GetCharCodeAt(i) * i) % _table.Length;
-            }
 
             return hash;
         }
 
         /// <summary>
         /// <para>Adiciona um valor vinculado a uma chave</para>
-        /// <para>Melhor caso tem complexidade de O(1)</para>
-        /// <para>Pior caso em caso de colisão de hashs tem complexidade de O(n)</para>
+        /// <para>Complexidade O(1)</para>
         /// </summary>
         /// <param name="key">Chave de hashing</param>
         /// <param name="value">Valor a ser armazenado</param>
@@ -51,27 +56,19 @@ namespace DataStructures.Hashs
         public void Add(string key, T value)
         {
             var hash = GenerateHashCode(key);
-            var newBucket = new Bucket<T>(key, value);
 
-            var rootBucket = _table[hash];
-            if (rootBucket == null)
+            var bucket = _table[hash];
+            if (bucket == null)
             {
-                _table[hash] = newBucket;
+                _table[hash] = new HashBucket<T>() { { key, value } };
+                _count++;
                 return;
             }
 
-            var cursorBucket = rootBucket;
-            while(cursorBucket.Overflow != null)
-            {
-                cursorBucket = cursorBucket.Overflow;
+            bucket.Add(key, value);
 
-                if(cursorBucket.Key == key)
-                    throw new InvalidOperationException("This key is already registered!");
-            }
-
-            cursorBucket.Overflow = newBucket;
-
-            _table[hash] = rootBucket;
+            _table[hash] = bucket;
+            _count++;
         }
 
         /// <summary>
@@ -84,57 +81,64 @@ namespace DataStructures.Hashs
         {
             var hash = GenerateHashCode(key);
 
-            var rootBucket = _table[hash];
-            if (rootBucket == null)
+            var bucket = _table[hash];
+            if (bucket == null)
             {
                 value = default;
                 return false;
             }
 
-            if(rootBucket.Overflow == null)
+            foreach (var item in bucket)
             {
-                value = rootBucket.Data;
-                return true;
-            }
-
-            Bucket<T> cursorBucket = rootBucket;
-            while (cursorBucket.Overflow != null)
-            {
-                cursorBucket = cursorBucket.Overflow;
-                if (cursorBucket.Key == key)
+                if (item.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    value = cursorBucket.Data;
+                    value = item.Data;
                     return true;
-                }
+                }                    
             }
 
             value = default;
             return false;
         }
 
-        private T Get(string key)
+        /// <summary>
+        /// <para>Remove o registro da hashtable</para>
+        /// <para>Complexidade O(n)</para>
+        /// </summary>
+        /// <param name="key">Chave de hashing</param>
+        /// <exception cref="ArgumentException"></exception>
+        public void Remove(string key)
         {
             var hash = GenerateHashCode(key);
 
-            var rootBucket = _table[hash];
-            if (rootBucket == null)
+            var bucket = _table[hash];
+            if (bucket == null)
+                throw new ArgumentException("Não há itens para a chave informada!", nameof(key));
+
+            bucket.Remove(key);
+
+            if (bucket.Length == 0)
+            {
+                _table[hash] = null;
+            }
+
+            _count--;
+        }
+
+        public T Get(string key)
+        {
+            var hash = GenerateHashCode(key);
+
+            var bucket = _table[hash];
+            if (bucket == null)
             {
                 throw new InvalidOperationException("Não há itens na HashTable!");
             }
 
-            if (rootBucket.Overflow == null)
+            foreach (var item in bucket)
             {
-                return rootBucket.Data;
-            }
-
-            Bucket<T> cursorBucket = rootBucket;
-            while (cursorBucket.Overflow != null)
-            {
-                cursorBucket = cursorBucket.Overflow;
-                if (cursorBucket.Key == key)
-                {
-                    return cursorBucket.Data;
-                }
+                if (item.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase))
+                    return item.Data;
             }
 
             throw new InvalidOperationException("Não existe item para a chave informada!");
@@ -154,10 +158,11 @@ namespace DataStructures.Hashs
         private class HashTableEnumerator<Type> : IEnumerator<Type>
         {
             private int _index = -1;
-            private Bucket<Type>? _current = default;
+            private HashBucketNode<Type> _current = default;
+            private HashBucket<Type>? _bucket = default;
 
-            private readonly Bucket<Type>[] _table;
-            public HashTableEnumerator(Bucket<Type>[] table)
+            private readonly HashBucket<Type>[] _table;
+            public HashTableEnumerator(HashBucket<Type>[] table)
             {
                 _table = table;
             }
@@ -168,21 +173,21 @@ namespace DataStructures.Hashs
 
             public void Dispose()
             {
-                _current = default;
+                _bucket = default;
             }
 
             public bool MoveNext()
             {
-                if(_current == null && _index < _table.Length)
+                if (_current == null && _index < _table.Length)
                 {
-                    _index++;
-                    _current = _table[_index];
+                    while(_bucket == null && _index < _table.Length)
+                    {
+                        _index++;
+                        _bucket = _table[_index];
+                    }
                 }
 
-                if(_current != null)
-                {
-                    _current = _current.Overflow;
-                }
+                _current = _current == null ? _bucket.Head : _current.Next;
 
                 return _index < _table.Length;
             }
@@ -192,19 +197,120 @@ namespace DataStructures.Hashs
                 _index = -1;
             }
         }
-        #endregion
+        #endregion      
+    }
 
-        private class Bucket<T>
+    /// <summary>
+    /// Linked list based hash bucket
+    /// </summary>
+    internal class HashBucket<T> : IEnumerable<HashBucketNode<T>>
+    {
+        private int _length;
+        private HashBucketNode<T> _head;
+        private HashBucketNode<T> _tail;
+
+        public int Length => _length;
+        public HashBucketNode<T> Head => _head;
+        public HashBucketNode<T> Tail => _tail;
+
+        public HashBucket() { }
+        public HashBucket(string key, T value) 
+        { 
+            Initialize(key, value);
+        }
+
+        public void Add(string key, T value)
         {
-            public Bucket(string key, T data)
+            if (_head == null)
             {
-                Key = key;
-                Data = data;
+                Initialize(key, value);
+                return;
             }
 
-            public string Key { get; }
-            public T Data { get; }
-            public Bucket<T>? Overflow { get; set; }
+            _tail.Next = new HashBucketNode<T>(key, value);
+            _length++;
         }
+
+        public void Remove(string key)
+        {
+            HashBucketNode<T> current = Head;
+            HashBucketNode<T> previous = default;
+
+            while (current.Key != key && current.Next != null)
+            {
+                previous = current;
+                current = current.Next;
+            }
+
+            if (!current.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase))
+                throw new ArgumentException("Não há itens para a chave informada!", nameof(key));
+
+            previous.Next = current.Next;
+        }
+
+        private void Initialize(string key, T value)
+        {
+            _head = new HashBucketNode<T>(key, value);
+            _tail = _head;
+            _length++;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return new BucketEnumerator<T>(_head);
+        }
+
+        public IEnumerator<HashBucketNode<T>> GetEnumerator()
+        {
+            return new BucketEnumerator<T>(_head);
+        }
+
+        private class BucketEnumerator<Type> : IEnumerator<HashBucketNode<Type>>
+        {
+            private readonly HashBucketNode<Type> _head;
+            private HashBucketNode<Type> _current;
+
+            public BucketEnumerator(HashBucketNode<Type> head)
+            {
+                _head = head;
+            }
+
+            public HashBucketNode<Type> Current => _current;
+
+            object IEnumerator.Current => Current;
+
+            public void Dispose()
+            {
+                _current = null;
+            }
+
+            public bool MoveNext()
+            {
+                _current = _current is null ? _head : _current.Next;
+
+                if (_current == null)
+                    return false;
+
+                return true;
+            }
+
+            public void Reset()
+            {
+                _current = default;
+            }
+        }
+    }
+
+    internal class HashBucketNode<NodeType>
+    {
+        public HashBucketNode(string key, NodeType data)
+        {
+            Key = key;
+            Data = data;
+        }
+
+        public string Key { get; }
+        public NodeType Data { get; }
+        public HashBucketNode<NodeType> Next { get; set; }
     }
 }
