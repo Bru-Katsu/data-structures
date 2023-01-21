@@ -1,7 +1,6 @@
 ﻿using DataStructures.Extensions;
 using System.Collections;
 using System.Runtime.InteropServices;
-using System.Security;
 
 namespace DataStructures.Hashs
 {
