@@ -30,6 +30,9 @@ namespace DataStructures.Listas
 
         public int Count => _lenght;
 
+        public LinkedNode<T> Head => _head;
+        public LinkedNode<T> Tail => _tail;
+
         /// <summary>
         /// <para>Adiciona um valor no início da lista</para>
         /// <para>Complexidade de O(1)</para>
@@ -109,7 +112,6 @@ namespace DataStructures.Listas
             if (_head.Next == null)
             {
                 _head = null;
-                return;
             }
             else
             {
@@ -189,6 +191,32 @@ namespace DataStructures.Listas
         }
 
         /// <summary>
+        /// <para>Retorna o último registro da lista</para>
+        /// <para>Complexidade de O(1)</para>
+        /// </summary>
+        /// <returns></returns>
+        public T GetLast()
+        {
+            if (_tail == null)
+                return default;
+
+            return _tail.Value;
+        }
+
+        /// <summary>
+        /// <para>Retorna o primeiro registro da lista</para>
+        /// <para>Complexidade de O(1)</para>
+        /// </summary>
+        /// <returns></returns>
+        public T GetFirst()
+        {
+            if (_head == null)
+                return default;
+
+            return _head.Value;
+        }
+
+        /// <summary>
         /// <para>Inverte a lista</para>
         /// <para>Complexidade de O(n)</para>
         /// </summary>
@@ -213,7 +241,7 @@ namespace DataStructures.Listas
 
         /// <summary>
         /// <para>Limpa a lista</para>
-        /// <para>Complexidade de O(n)</para>
+        /// <para>Complexidade de O(1)</para>
         /// </summary>
         public void Clear()
         {
@@ -313,23 +341,23 @@ namespace DataStructures.Listas
             }
         }
         #endregion
-
-        #region Types
-        private class LinkedNode<Type>
-        {
-            public LinkedNode(Type value)
-            {
-                Value = value;
-            }
-
-            public Type Value { get; }
-
-            public LinkedNode<Type> Next { get; private set; }
-            internal void SetNext(LinkedNode<Type> node)
-            {
-                Next = node;
-            }
-        }
-        #endregion
     }
+
+    #region Types
+    public class LinkedNode<Type>
+    {
+        public LinkedNode(Type value)
+        {
+            Value = value;
+        }
+
+        public Type Value { get; }
+
+        public LinkedNode<Type> Next { get; private set; }
+        internal void SetNext(LinkedNode<Type> node)
+        {
+            Next = node;
+        }
+    }
+    #endregion
 }

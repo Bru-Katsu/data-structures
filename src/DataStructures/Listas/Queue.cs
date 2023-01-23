@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace DataStructures.Listas
 {
@@ -8,109 +9,61 @@ namespace DataStructures.Listas
     {
         public Queue()
         {
-            _storage = new T[_defaultCapacity];
+            _storage = new LinkedList<T>();
         }
+       
+        private LinkedList<T> _storage;
 
-        public Queue(int capacity)
-        {
-            if (capacity < 0)
-                throw new ArgumentOutOfRangeException("Negative capacity is not supported!");
-
-            _storage = new T[capacity];
-            _hasCapacityDefined = true;
-        }
-
-        private const int _minimumGrow = 2;
-        private const int _defaultCapacity = 10;
-
-        private readonly bool _hasCapacityDefined = false;
-        
-        private int _internalSize = 0;
-        private T[] _storage;
-
-        private int _head;
-        private int _tail;
-
-        public int Size => _internalSize;
+        public int Size => _storage.Count;
         public bool IsEmpty => Size == 0;
 
         /// <summary>
-        /// Complexidade de O(1)
+        /// <para>Acessa o primeiro item da fila, mas sem remover</para>
+        /// <para>Complexidade de O(1)</para>
         /// </summary>
         /// <returns></returns>
         public T Peek()
         {
-            if(IsEmpty)
+            if(_storage.Count == 0)
                 return default;
 
-            return _storage[_head];
-        }
-
-        //O(n) only on expand, otherwise is O(1)
-        public void Enqueue(T element)
-        {
-            if (_internalSize == _storage.Length)
-            {
-                if(_hasCapacityDefined)
-                    throw new ArgumentOutOfRangeException("The Queue is full!");
-                else
-                    Expand();
-            }
-
-            _storage[_tail] = element;
-            _tail++;
-            _internalSize++;
+            return _storage.GetFirst();
         }
 
         /// <summary>
-        /// Complexidade de O(1)
+        /// <para>Adiciona um item na fila</para>
+        /// <para>Complexidade de O(1)</para>
         /// </summary>
         /// <returns></returns>
+        public void Enqueue(T element)
+        {
+            _storage.AddLast(element);
+        }
+
+        /// <summary>
+        /// <para>Remove um item da fila</para>
+        /// <para>Complexidade de O(1)</para>
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public T Dequeue()
         {
-            if (IsEmpty)
-                throw new ArgumentOutOfRangeException("Queue is Empty!");
+            if(_storage.Count == 0)
+                throw new InvalidOperationException("A fila está vazia!");
 
-            T dequeued = _storage[_head];
-            _storage[_head] = default;
-            _head = (_head + 1) % _storage.Length;
+            var value = _storage.GetFirst();
+            _storage.RemoveFirst();
 
-            _internalSize--;
-
-            return dequeued;
+            return value;
         }
 
-        //TODO: reavaliar esse método
-        //public void Trim() => Redimensionate(_internalSize);
-
-        private void Expand()
+        /// <summary>
+        /// <para>Limpa a fila</para>
+        /// <para>Complexidade de O(1)</para>
+        /// </summary>
+        public void Clear()
         {
-            int newCapacity = (int)((long)_storage.Length * 2 / 100);
-            if (newCapacity < _storage.Length + _minimumGrow)
-            {
-                newCapacity = _storage.Length + _minimumGrow;
-            }
-
-            Redimensionate(newCapacity);
-        }
-
-        private void Redimensionate(int toCapacity)
-        {
-            var newStorage = new T[toCapacity];
-            if (_internalSize > 0)
-            {
-                if (_head < _tail)
-                    Array.Copy(_storage, newStorage, _internalSize);                    
-                else
-                {
-                    Array.Copy(_storage, _head, newStorage, 0, _storage.Length - _head);
-                    Array.Copy(_storage, 0, newStorage, _storage.Length - _head, _tail);
-                }
-            }
-
-            _storage = newStorage;
-            _head = 0;
-            _tail = (_internalSize == toCapacity) ? 0 : _internalSize;
+            _storage.Clear();
         }
 
         #region Enumerable
@@ -126,15 +79,16 @@ namespace DataStructures.Listas
 
         private class QueueEnumerator<Type> : IEnumerator<Type>
         {
-            private readonly Type[] _queue;
-            private int _index = -1;
+            private readonly LinkedList<Type> _storage;
 
-            public QueueEnumerator(Type[] queue)
+            private LinkedNode<Type> _current;
+
+            public QueueEnumerator(LinkedList<Type> storage)
             {
-                _queue = queue;
+                _storage = storage;
             }
 
-            public Type Current => _queue[_index];
+            public Type Current => _current.Value;
 
             object IEnumerator.Current => Current;
 
@@ -142,13 +96,17 @@ namespace DataStructures.Listas
 
             public bool MoveNext()
             {
-                _index++;
-                return _index < _queue.Length;                
+                _current = _current is null ? _storage.Head : _current.Next;
+
+                if (_current == null)
+                    return false;
+
+                return true;
             }
 
             public void Reset()
             {
-                _index = -1;
+                _current = null;
             }
         }
         #endregion

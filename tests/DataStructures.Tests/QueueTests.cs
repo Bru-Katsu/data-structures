@@ -97,15 +97,22 @@ namespace DataStructures.Tests
             Assert.True(fila.IsEmpty);            
         }
 
-        [Fact(DisplayName = "Ao criar uma fila com a capacidade negativa, deve estourar exception")]
-        [Trait(nameof(Queue<int>), "Instânciar")]
-        public void Instanciar_FilaComCapacidadeNegativa_DeveEstourarException()
+        [Fact(DisplayName = "Ao criar uma fila, o tamanho deve ser zero")]
+        [Trait(nameof(Queue<int>), nameof(Queue<int>.Clear))]
+        public void Clear_FilaComItens_AoLimparQuantidadeDeRegistrosDeveSerZerado()
         {
             //arrange
-            var capacidade = -1;
+            var fila = new Queue<int>();
+            fila.Enqueue(1);
+            fila.Enqueue(3);
+            fila.Enqueue(5);
+            fila.Enqueue(9);
 
-            //act & assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => new Queue<int>(capacidade));
+            //act
+            fila.Clear();
+
+            //assert
+            Assert.Equal(0, fila.Size);
         }
 
         [Fact(DisplayName = "Ao criar uma fila, o tamanho deve ser zero")]
@@ -114,11 +121,9 @@ namespace DataStructures.Tests
         {
             //arrange & act
             var filaSemCapacidade = new Queue<int>();
-            var filaComCapacidade = new Queue<int>(5);
 
             //assert
             Assert.Equal(0, filaSemCapacidade.Size);
-            Assert.Equal(0, filaComCapacidade.Size);
         }
     }
 }
