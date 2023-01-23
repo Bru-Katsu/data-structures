@@ -111,15 +111,14 @@ namespace DataStructures.Hashs
             var hash = GenerateHashCode(key);
 
             var bucket = _table[hash];
+
             if (bucket == null)
                 throw new ArgumentException("Não há itens para a chave informada!", nameof(key));
 
             bucket.Remove(key);
 
             if (bucket.Length == 0)
-            {
                 _table[hash] = null;
-            }
 
             _count--;
         }
@@ -129,10 +128,9 @@ namespace DataStructures.Hashs
             var hash = GenerateHashCode(key);
 
             var bucket = _table[hash];
+
             if (bucket == null)
-            {
                 throw new InvalidOperationException("Não há itens na HashTable!");
-            }
 
             foreach (var item in bucket)
             {
