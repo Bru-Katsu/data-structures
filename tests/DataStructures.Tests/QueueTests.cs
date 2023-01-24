@@ -37,7 +37,7 @@ namespace DataStructures.Tests
             fila.Enqueue(3);
 
             //assert
-            Assert.Equal(3, fila.Size);
+            Assert.Equal(3, fila.Count);
         }
 
         [Fact(DisplayName = "Ao enfileirar, a fila não pode ser vazia")]
@@ -112,7 +112,7 @@ namespace DataStructures.Tests
             fila.Clear();
 
             //assert
-            Assert.Equal(0, fila.Size);
+            Assert.Equal(0, fila.Count);
         }
 
         [Fact(DisplayName = "Ao criar uma fila, o tamanho deve ser zero")]
@@ -123,7 +123,7 @@ namespace DataStructures.Tests
             var filaSemCapacidade = new Queue<int>();
 
             //assert
-            Assert.Equal(0, filaSemCapacidade.Size);
+            Assert.Equal(0, filaSemCapacidade.Count);
         }
     }
 }

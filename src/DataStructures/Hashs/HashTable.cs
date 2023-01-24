@@ -1,10 +1,12 @@
 ﻿using DataStructures.Extensions;
 using System.Collections;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace DataStructures.Hashs
 {
     [ComVisible(true)]
+    [DebuggerDisplay("Count = {Count}")]
     public class HashTable<T> : IEnumerable<T>
     {
         private int _count = 0;

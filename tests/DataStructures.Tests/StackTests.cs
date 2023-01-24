@@ -79,7 +79,7 @@ namespace DataStructures.Tests
             var pilha = new Stack<int>();
 
             //act & assert
-            Assert.Equal(0, pilha.Size);
+            Assert.Equal(0, pilha.Count);
         }
     }
 }

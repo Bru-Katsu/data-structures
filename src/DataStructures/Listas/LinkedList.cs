@@ -1,9 +1,11 @@
 ﻿using System.Collections;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace DataStructures.Listas
 {
     [ComVisible(true)]
+    [DebuggerDisplay("Count = {Count}")]
     public class LinkedList<T> : IEnumerable<T>
     {
         private int _lenght;

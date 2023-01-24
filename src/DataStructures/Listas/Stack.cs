@@ -1,9 +1,11 @@
 ﻿using System.Collections;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace DataStructures.Listas
 {
     [ComVisible(true)]
+    [DebuggerDisplay("Count = {Count}")]
     public class Stack<T> : IEnumerable<T>
     {
         public Stack()
@@ -13,8 +15,8 @@ namespace DataStructures.Listas
 
         private DoubleLinkedList<T> _storage;
 
-        public int Size => _storage.Count;
-        public bool IsEmpty => Size == 0;
+        public int Count => _storage.Count;
+        public bool IsEmpty => Count == 0;
 
         /// <summary>
         /// Complexidade de O(1)

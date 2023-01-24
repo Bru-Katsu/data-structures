@@ -1,14 +1,22 @@
 ﻿using System.Collections;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace DataStructures.Listas
 {
     [ComVisible(true)]
+    [DebuggerDisplay("Count = {Count}")]
     public class DoubleLinkedList<T> : IEnumerable<T>
     {
         private DoubleLinkedNode<T> _head;
         private DoubleLinkedNode<T> _tail;
         private int _lenght;
+
+        public DoubleLinkedList() { }
+        public DoubleLinkedList(T item)
+        {
+            Initialize(item);
+        }
 
         /// <summary>
         /// Obtém ou insere valores na lista
@@ -26,12 +34,6 @@ namespace DataStructures.Listas
 
         public DoubleLinkedNode<T> Head => _head;
         public DoubleLinkedNode<T> Tail => _tail;
-
-        public DoubleLinkedList() { }
-        public DoubleLinkedList(T item)
-        {
-            Initialize(item);
-        }
 
         /// <summary>
         /// <para>Adiciona um valor ao final da lista</para>

@@ -1,10 +1,12 @@
 ﻿using System.Collections;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace DataStructures.Listas
 {
     [ComVisible(true)]
+    [DebuggerDisplay("Count = {Count}")]
     public class Queue<T> : IEnumerable<T>
     {
         public Queue()
@@ -14,8 +16,8 @@ namespace DataStructures.Listas
        
         private LinkedList<T> _storage;
 
-        public int Size => _storage.Count;
-        public bool IsEmpty => Size == 0;
+        public int Count => _storage.Count;
+        public bool IsEmpty => Count == 0;
 
         /// <summary>
         /// <para>Acessa o primeiro item da fila, mas sem remover</para>
