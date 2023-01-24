@@ -167,6 +167,82 @@ namespace DataStructures.Tests
         }
         #endregion
 
+        #region RemoveFirst
+        [Fact(DisplayName = "Ao remover o primeiro item de uma lista com registros, quantidade deve ser decrementada"), Trait(nameof(DoubleLinkedList<int>), nameof(DoubleLinkedList<int>.RemoveFirst))]
+        public void RemoveFirst_ListaComItens_DeveDecrementarTamanho()
+        {
+            //arrange
+            var list = new DoubleLinkedList<int>() { 16, 1, 15 };
+
+            //act 
+            list.RemoveFirst();
+
+            //assert
+            Assert.Equal(2, list.Count);
+        }
+
+        [Fact(DisplayName = "Ao remover o primeiro item de uma lista com um item, quantidade deve ser decrementada"), Trait(nameof(DoubleLinkedList<int>), nameof(DoubleLinkedList<int>.RemoveFirst))]
+        public void RemoveFirst_ListaComUmItem_DeveDecrementarTamanho()
+        {
+            //arrange
+            var list = new DoubleLinkedList<int>() { 16 };
+
+            //act 
+            list.RemoveFirst();
+
+            //assert
+            Assert.Equal(0, list.Count);
+        }
+
+        [Fact(DisplayName = "Ao tentar remover o primeiro item de uma lista sem itens, deve retornar exception"), Trait(nameof(DoubleLinkedList<int>), nameof(DoubleLinkedList<int>.RemoveFirst))]
+        public void RemoveFirst_ListaVazia_DeveRetornarException()
+        {
+            //arrange
+            var list = new DoubleLinkedList<int>() { };
+
+            //act & assert
+            Assert.Throws<InvalidOperationException>(() => list.RemoveFirst());
+        }
+        #endregion
+
+        #region RemoveLast
+        [Fact(DisplayName = "Ao remover o primeiro item de uma lista com registros, quantidade deve ser decrementada"), Trait(nameof(DoubleLinkedList<int>), nameof(DoubleLinkedList<int>.RemoveLast))]
+        public void RemoveLast_ListaComItens_DeveDecrementarTamanho()
+        {
+            //arrange
+            var list = new DoubleLinkedList<int>() { 16, 1, 15 };
+
+            //act 
+            list.RemoveLast();
+
+            //assert
+            Assert.Equal(2, list.Count);
+        }
+
+        [Fact(DisplayName = "Ao remover o primeiro item de uma lista com um item, quantidade deve ser decrementada"), Trait(nameof(DoubleLinkedList<int>), nameof(DoubleLinkedList<int>.RemoveLast))]
+        public void RemoveLast_ListaComUmItem_DeveDecrementarTamanho()
+        {
+            //arrange
+            var list = new DoubleLinkedList<int>() { 16 };
+
+            //act 
+            list.RemoveLast();
+
+            //assert
+            Assert.Equal(0, list.Count);
+        }
+
+        [Fact(DisplayName = "Ao tentar remover o primeiro item de uma lista sem itens, deve retornar exception"), Trait(nameof(DoubleLinkedList<int>), nameof(DoubleLinkedList<int>.RemoveLast))]
+        public void RemoveLast_ListaVazia_DeveRetornarException()
+        {
+            //arrange
+            var list = new DoubleLinkedList<int>() { };
+
+            //act & assert
+            Assert.Throws<InvalidOperationException>(() => list.RemoveLast());
+        }
+        #endregion
+
         [Fact(DisplayName = "Ao percorrer o IEnumerable, deve retornar o valor se existir na lista"), Trait(nameof(DoubleLinkedList<int>), "IEnumerable")]
         public void Pesquisar_IEnumerableDeveRetornarItemCorreto()
         {

@@ -8,27 +8,12 @@ namespace DataStructures.Listas
     {
         public Stack()
         {
-            _storage = new T[_defaultCapacity];
+            _storage = new DoubleLinkedList<T>();
         }
 
-        public Stack(int capacity)
-        {
-            if (capacity < 0)
-                throw new ArgumentOutOfRangeException("Negative capacity is not supported!");
+        private DoubleLinkedList<T> _storage;
 
-            _hasCapacityDefined = true;
-            _storage = new T[capacity];
-        }
-
-        private const int _defaultCapacity = 10;
-        private const int _growthFactor = 2;
-
-        private readonly bool _hasCapacityDefined = false;
-        
-        private int _internalSize = -1;
-        private T[] _storage;
-
-        public int Size => _internalSize + 1;
+        public int Size => _storage.Count;
         public bool IsEmpty => Size == 0;
 
         /// <summary>
@@ -38,32 +23,24 @@ namespace DataStructures.Listas
         public T Peek()
         {
             if (!IsEmpty)
-                return _storage[_internalSize];
+                return _storage.GetLast();
 
             return default;
         }
 
         /// <summary>
-        /// <para>Melhor caso tem complexidade de O(1)</para>
-        /// <para>Pior caso (redimensionamento) tem complexidade de O(n)</para>
+        /// <para>Adiciona um novo registro na pilha</para>
+        /// <para>Complexidade de O(1)</para>
         /// </summary>
         /// <param name="item"></param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void Push(T item)
         {
-            if (Size == _storage.Length)
-            {
-                if (_hasCapacityDefined)
-                    throw new ArgumentOutOfRangeException("The Stack is full!");
-                else
-                    Array.Resize(ref _storage, _growthFactor * _storage.Length);
-            }
-
-            _internalSize++;
-            _storage[_internalSize] = item;
+            _storage.AddLast(item);
         }
 
         /// <summary>
+        /// Remove um item da pilha
         /// Complexidade de O(1)
         /// </summary>
         /// <returns></returns>
@@ -73,10 +50,8 @@ namespace DataStructures.Listas
             if (IsEmpty)
                 throw new InvalidOperationException("The Stack is empty!");
 
-            var lastItem = _storage[_internalSize];
-            _storage[_internalSize] = default;
-
-            _internalSize--;
+            var lastItem = _storage.GetLast();
+            _storage.RemoveLast();
 
             return lastItem;
         }
@@ -94,29 +69,35 @@ namespace DataStructures.Listas
 
         private class StackEnumerator<Type> : IEnumerator<Type>
         {
-            private readonly Type[] _stackedStorage;
-            private int _tail;
-            public StackEnumerator(Type[] stackedStorage)
+            private readonly DoubleLinkedList<Type> _storage;
+            private DoubleLinkedNode<Type> _current;
+            public StackEnumerator(DoubleLinkedList<Type> storage)
             {
-                _stackedStorage = stackedStorage;
-                _tail = _stackedStorage.Length - 1;
+                _storage = storage;                
             }
 
-            public Type Current => _stackedStorage[_tail];
+            public Type Current => _current.Value;
 
             object IEnumerator.Current => Current;
 
-            public void Dispose() { }
+            public void Dispose() 
+            {
+                _current = null;
+            }
 
             public bool MoveNext()
             {
-                _tail--;
-                return _tail >= 0;
+                _current = _current == null ? _storage.Tail : _current.Previous;
+
+                if (_current == null)
+                    return false;
+
+                return true;
             }
 
             public void Reset()
             {
-                _tail = _stackedStorage.Length - 1;
+                _current = null;
             }
         }
         #endregion

@@ -24,6 +24,9 @@ namespace DataStructures.Listas
 
         public int Count => _lenght;
 
+        public DoubleLinkedNode<T> Head => _head;
+        public DoubleLinkedNode<T> Tail => _tail;
+
         public DoubleLinkedList() { }
         public DoubleLinkedList(T item)
         {
@@ -119,7 +122,6 @@ namespace DataStructures.Listas
             if (_head.Next == null)
             {
                 _head = null;
-                return;
             }
             else
             {
@@ -146,7 +148,6 @@ namespace DataStructures.Listas
             if (_tail.Previous == null)
             {
                 _tail = null;
-                return;
             }
             else
             {
@@ -202,6 +203,32 @@ namespace DataStructures.Listas
             var currentNode = TraverseTo(index);
 
             return currentNode.Value;
+        }
+
+        /// <summary>
+        /// <para>Retorna o último registro da lista</para>
+        /// <para>Complexidade de O(1)</para>
+        /// </summary>
+        /// <returns></returns>
+        public T GetLast()
+        {
+            if (_tail == null)
+                return default;
+
+            return _tail.Value;
+        }
+
+        /// <summary>
+        /// <para>Retorna o primeiro registro da lista</para>
+        /// <para>Complexidade de O(1)</para>
+        /// </summary>
+        /// <returns></returns>
+        public T GetFirst()
+        {
+            if (_head == null)
+                return default;
+
+            return _head.Value;
         }
 
         /// <summary>
@@ -306,31 +333,32 @@ namespace DataStructures.Listas
                 throw new ArgumentOutOfRangeException(nameof(index), "Posição fora do tamanho da lista!");
         }
 
-        private class DoubleLinkedNode<Type>
-        {
-            public DoubleLinkedNode(Type value)
-            {
-                Value = value;
-            }
-
-            public DoubleLinkedNode(Type value, DoubleLinkedNode<Type> previous) : this(value)
-            {
-                Previous = previous;
-            }
-
-            public DoubleLinkedNode<Type>? Previous { get; private set; }
-            public void SetPrevious(DoubleLinkedNode<Type> node)
-            {
-                Previous = node;
-            }
-
-            public DoubleLinkedNode<Type>? Next { get; private set; }
-            public void SetNext(DoubleLinkedNode<Type> node)
-            {
-                Next = node;
-            }
-
-            public Type Value { get; }
-        }
     }
+    public class DoubleLinkedNode<Type>
+    {
+        public DoubleLinkedNode(Type value)
+        {
+            Value = value;
+        }
+
+        public DoubleLinkedNode(Type value, DoubleLinkedNode<Type> previous) : this(value)
+        {
+            Previous = previous;
+        }
+
+        public DoubleLinkedNode<Type>? Previous { get; private set; }
+        public void SetPrevious(DoubleLinkedNode<Type> node)
+        {
+            Previous = node;
+        }
+
+        public DoubleLinkedNode<Type>? Next { get; private set; }
+        public void SetNext(DoubleLinkedNode<Type> node)
+        {
+            Next = node;
+        }
+
+        public Type Value { get; }
+    }
+
 }
