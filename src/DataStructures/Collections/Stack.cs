@@ -2,55 +2,71 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace DataStructures.Listas
+namespace DataStructures.Collections
 {
+    /// <summary>
+    /// A classe `Stack` representa uma estrutura de dados LIFO (Last In First Out). 
+    /// Os itens são adicionados e removidos apenas na extremidade superior da pilha. 
+    /// A classe é implementada usando uma lista duplamente encadeada.
+    /// </summary>
     [ComVisible(true)]
     [DebuggerDisplay("Count = {Count}")]
     public class Stack<T> : IEnumerable<T>
     {
+        private readonly DoubleLinkedList<T> _storage;
+
+        /// <summary>
+        /// Construtor padrão que inicializa uma nova instância da classe <see cref="Stack{T}"/>.
+        /// </summary>
         public Stack()
         {
             _storage = new DoubleLinkedList<T>();
         }
 
-        private DoubleLinkedList<T> _storage;
-
+        /// <summary>
+        /// Obtém o número de elementos na pilha.
+        /// </summary>
         public int Count => _storage.Count;
+
+        /// <summary>
+        /// Obtém um valor que indica se a pilha está vazia.
+        /// </summary>
         public bool IsEmpty => Count == 0;
 
         /// <summary>
-        /// Complexidade de O(1)
+        /// Obtém o elemento no topo da pilha sem removê-lo.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>O elemento no topo da pilha.</returns>
+        /// <exception cref="InvalidOperationException">Se a pilha estiver vazia.</exception>
         public T Peek()
         {
             if (!IsEmpty)
                 return _storage.GetLast();
 
-            return default;
+            throw new InvalidOperationException("A pilha está vazia!");
         }
 
         /// <summary>
-        /// <para>Adiciona um novo registro na pilha</para>
-        /// <para>Complexidade de O(1)</para>
+        /// Adiciona um elemento ao topo da pilha.
         /// </summary>
-        /// <param name="item"></param>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <param name="item">O elemento a ser adicionado.</param>
         public void Push(T item)
         {
+            if (item == null)
+                throw new ArgumentNullException(nameof(item), "Não é permitido valores nulos!");
+
             _storage.AddLast(item);
         }
 
         /// <summary>
-        /// Remove um item da pilha
-        /// Complexidade de O(1)
+        /// Remove e retorna o elemento no topo da pilha.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <returns>O elemento removido do topo da pilha.</returns>
+        /// <exception cref="InvalidOperationException">Se a pilha estiver vazia.</exception>
         public T Pop()
         {
             if (IsEmpty)
-                throw new InvalidOperationException("The Stack is empty!");
+                throw new InvalidOperationException("A pilha está vazia!");
 
             var lastItem = _storage.GetLast();
             _storage.RemoveLast();
@@ -59,11 +75,19 @@ namespace DataStructures.Listas
         }
 
         #region Enumerable
+        /// <summary>
+        /// Obtém um enumerador que itera através da pilha.
+        /// </summary>
+        /// <returns>Um enumerador que itera através da pilha.</returns>
         public IEnumerator<T> GetEnumerator()
         {
             return new StackEnumerator<T>(_storage);
         }
 
+        /// <summary>
+        /// Obtém um enumerador que itera através da pilha.
+        /// </summary>
+        /// <returns>Um enumerador que itera através da pilha.</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return new StackEnumerator<T>(_storage);
