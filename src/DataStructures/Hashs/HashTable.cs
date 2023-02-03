@@ -4,23 +4,32 @@ using System.Runtime.InteropServices;
 
 namespace DataStructures.Hashs
 {
+    /// <summary>
+    /// Representa uma implementação de HashTable
+    /// </summary>
+    /// <typeparam name="T">Tipo do objeto a ser armazenado na HashTable</typeparam>
     [ComVisible(true)]
     [DebuggerDisplay("Count = {Count}")]
     public class HashTable<T> : IEnumerable<T>
     {
         private int _count = 0;
         private readonly HashBucket<T>[] _table;
+
+        /// <summary>
+        /// Inicializa uma nova instância da classe HashTable
+        /// </summary>
+        /// <param name="size">Tamanho da HashTable</param>
         public HashTable(int size)
         {
             _table = new HashBucket<T>[size];
         }
 
         /// <summary>
-        /// Adiciona ou Obtém um item na HashTable
+        /// Propriedade indexada para adicionar ou obter um item na HashTable
         /// </summary>
         /// <param name="key">Chave de hashing</param>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <returns>Item na HashTable</returns>
+        /// <exception cref="ArgumentNullException">Exceção é lançada se a chave for nula ou em branco</exception>
         public T this[string key]
         {
             get => Get(key);
@@ -28,29 +37,31 @@ namespace DataStructures.Hashs
         }
 
         /// <summary>
-        /// Quantidade de itens
+        /// Obtém a quantidade de itens na HashTable
         /// </summary>
         public int Count => _count;
 
         /// <summary>
         /// Gera hash de acordo com a key.
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <param name="key">Chave a ser usada para gerar hash</param>
+        /// <returns>Hash gerado</returns>
         private int GenerateHashCode(string key)
         {
             return Math.Abs(key.GetHashCode()) % _table.Length;
         }
 
         /// <summary>
-        /// <para>Adiciona um valor vinculado a uma chave</para>
-        /// <para>Complexidade O(1)</para>
+        /// Adiciona um valor vinculado a uma chave na HashTable
         /// </summary>
         /// <param name="key">Chave de hashing</param>
         /// <param name="value">Valor a ser armazenado</param>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ArgumentNullException">Exceção é lançada se a chave for nula ou em branco</exception>
         public void Add(string key, T value)
         {
+            if(string.IsNullOrEmpty(key))
+                throw new ArgumentNullException(nameof(key), "Não é permitido chave nula ou em branco!");
+
             var hash = GenerateHashCode(key);
 
             var bucket = _table[hash];
@@ -68,13 +79,17 @@ namespace DataStructures.Hashs
         }
 
         /// <summary>
-        /// Retorna um valor armazenado na HashTable. Caso não exista nenhum valor para a chave, retorna como false.
+        /// Tentar obter um valor armazenado na HashTable
         /// </summary>
         /// <param name="key">Chave de hashing</param>
         /// <param name="value">Valor armazenado</param>
-        /// <returns></returns>
+        /// <returns>Booleano indicando se o valor foi encontrado ou não</returns>
+        /// <exception cref="ArgumentNullException">Exceção é lançada se a chave for nula ou em branco</exception>
         public bool TryGet(string key, out T value)
         {
+            if (string.IsNullOrEmpty(key))
+                throw new ArgumentNullException(nameof(key), "Não é permitido chave nula ou em branco!");
+
             var hash = GenerateHashCode(key);
 
             var bucket = _table[hash];
@@ -98,13 +113,15 @@ namespace DataStructures.Hashs
         }
 
         /// <summary>
-        /// <para>Remove o registro da hashtable</para>
-        /// <para>Complexidade O(n)</para>
+        /// Remove um registro da HashTable
         /// </summary>
         /// <param name="key">Chave de hashing</param>
-        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException">Exceção é lançada se a chave for nula ou em branco</exception>
         public void Remove(string key)
         {
+            if (string.IsNullOrEmpty(key))
+                throw new ArgumentNullException(nameof(key), "Não é permitido chave nula ou em branco!");
+
             var hash = GenerateHashCode(key);
 
             var bucket = _table[hash];
@@ -120,8 +137,17 @@ namespace DataStructures.Hashs
             _count--;
         }
 
+        /// <summary>
+        /// Obtém um valor armazenado na HashTable
+        /// </summary>
+        /// <param name="key">Chave de hashing</param>
+        /// <returns>Valor armazenado</returns>
+        /// <exception cref="ArgumentNullException">Exceção é lançada se a chave for nula ou em branco</exception>
         public T Get(string key)
         {
+            if (string.IsNullOrEmpty(key))
+                throw new ArgumentNullException(nameof(key), "Não é permitido chave nula ou em branco!");
+
             var hash = GenerateHashCode(key);
 
             var bucket = _table[hash];
@@ -195,7 +221,8 @@ namespace DataStructures.Hashs
     }
 
     /// <summary>
-    /// Linked list based hash bucket
+    /// Classe que implementa uma lista encadeada usada para armazenar elementos do tipo `T`
+    /// associados a uma chave.
     /// </summary>
     internal class HashBucket<T> : IEnumerable<HashBucketNode<T>>
     {
@@ -203,16 +230,41 @@ namespace DataStructures.Hashs
         private HashBucketNode<T> _head;
         private HashBucketNode<T> _tail;
 
+        /// <summary>
+        /// A propriedade `Length` retorna a quantidade de elementos armazenados na lista.
+        /// </summary>
         public int Length => _length;
+
+        /// <summary>
+        /// A propriedade `Head` retorna o primeiro elemento da lista.
+        /// </summary>
         public HashBucketNode<T> Head => _head;
+
+        /// <summary>
+        /// A propriedade `Tail` retorna o último elemento da lista.
+        /// </summary>
         public HashBucketNode<T> Tail => _tail;
 
+        /// <summary>
+        /// Construtor padrão da classe.
+        /// </summary>
         public HashBucket() { }
+
+        /// <summary>
+        /// Construtor que inicializa a classe com a chave e o valor informados.
+        /// </summary>
+        /// <param name="key">A chave de hashing do elemento a ser armazenado.</param>
+        /// <param name="value">O valor do elemento a ser armazenado.</param>
         public HashBucket(string key, T value) 
         { 
             Initialize(key, value);
         }
 
+        /// <summary>
+        /// Método que adiciona um elemento à lista com a chave e o valor informados.
+        /// </summary>
+        /// <param name="key">A chave de hashing do elemento a ser adicionado.</param>
+        /// <param name="value">O valor do elemento a ser adicionado.</param>
         public void Add(string key, T value)
         {
             if (_head == null)
@@ -225,6 +277,10 @@ namespace DataStructures.Hashs
             _length++;
         }
 
+        /// <summary>
+        /// Método que remove um elemento da lista a partir da chave informada.
+        /// </summary>
+        /// <param name="key">A chave de hashing do elemento a ser removido.</param>
         public void Remove(string key)
         {
             if (_head.Next == null)
@@ -251,6 +307,11 @@ namespace DataStructures.Hashs
             previous.Next = current.Next;
         }
 
+        /// <summary>
+        /// Inicializa um novo nó de bucket da hashtable
+        /// </summary>
+        /// <param name="key">A chave de hashing</param>
+        /// <param name="value">O valor do nó</param>
         private void Initialize(string key, T value)
         {
             _head = new HashBucketNode<T>(key, value);
@@ -258,11 +319,19 @@ namespace DataStructures.Hashs
             _length++;
         }
 
+        /// <summary>
+        /// Obtém o enumerador para os nós do bucket
+        /// </summary>
+        /// <returns>O enumerador para os nós do bucket</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return new BucketEnumerator<T>(_head);
         }
 
+        /// <summary>
+        /// Obtém o enumerador para os nós do bucket
+        /// </summary>
+        /// <returns>O enumerador para os nós do bucket</returns>
         public IEnumerator<HashBucketNode<T>> GetEnumerator()
         {
             return new BucketEnumerator<T>(_head);
