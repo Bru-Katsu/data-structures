@@ -1,5 +1,4 @@
-﻿using DataStructures.Extensions;
-using System.Collections;
+﻿using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -21,6 +20,7 @@ namespace DataStructures.Hashs
         /// </summary>
         /// <param name="key">Chave de hashing</param>
         /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public T this[string key]
         {
             get => Get(key);
@@ -33,18 +33,13 @@ namespace DataStructures.Hashs
         public int Count => _count;
 
         /// <summary>
-        /// Gera hash de acordo com a key. Pretendo melhorar isso futuramente.
+        /// Gera hash de acordo com a key.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
         private int GenerateHashCode(string key)
         {
-            int hash = 0;
-
-            for (var i = 0; i < key.Length; i++)
-                hash = (hash + key.GetCharCodeAt(i) * i) % _table.Length;
-
-            return hash;
+            return Math.Abs(key.GetHashCode()) % _table.Length;
         }
 
         /// <summary>
@@ -232,7 +227,16 @@ namespace DataStructures.Hashs
 
         public void Remove(string key)
         {
-            HashBucketNode<T> current = Head;
+            if (_head.Next == null)
+            {
+                if(_head.Key != key)
+                    throw new ArgumentException("Não há itens para a chave informada!", nameof(key));
+
+                _head = null;
+                return;
+            }
+
+            HashBucketNode<T> current = _head;
             HashBucketNode<T> previous = default;
 
             while (current.Key != key && current.Next != null)
