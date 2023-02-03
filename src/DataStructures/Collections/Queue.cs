@@ -1,53 +1,61 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Threading;
 
-namespace DataStructures.Listas
+namespace DataStructures.Collections
 {
+    /// <summary>
+    /// Classe Queue, implementação de uma fila (First-In, First-Out) utilizando uma lista encadeada.
+    /// </summary>
     [ComVisible(true)]
     [DebuggerDisplay("Count = {Count}")]
     public class Queue<T> : IEnumerable<T>
     {
+        private readonly LinkedList<T> _storage;
+
+        /// <summary>
+        /// Construtor padrão que inicializa uma nova instância da classe Queue.
+        /// </summary>
         public Queue()
         {
             _storage = new LinkedList<T>();
         }
-       
-        private LinkedList<T> _storage;
 
+        /// <summary>
+        /// Propriedade que obtém o número de elementos na fila.
+        /// </summary>
         public int Count => _storage.Count;
+
+        /// <summary>
+        /// Propriedade que obtém um valor que indica se a fila está vazia.
+        /// </summary>
         public bool IsEmpty => Count == 0;
 
         /// <summary>
-        /// <para>Acessa o primeiro item da fila, mas sem remover</para>
-        /// <para>Complexidade de O(1)</para>
+        /// Método que retorna o primeiro elemento da fila sem removê-lo.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>O primeiro elemento da fila</returns>
         public T Peek()
         {
             if(_storage.Count == 0)
-                return default;
+                throw new InvalidOperationException("A fila não contém itens!");
 
             return _storage.GetFirst();
         }
 
         /// <summary>
-        /// <para>Adiciona um item na fila</para>
-        /// <para>Complexidade de O(1)</para>
+        /// Método que adiciona um elemento ao final da fila.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="element">Elemento a ser adicionado na fila</param>
         public void Enqueue(T element)
         {
             _storage.AddLast(element);
         }
 
         /// <summary>
-        /// <para>Remove um item da fila</para>
-        /// <para>Complexidade de O(1)</para>
+        /// Método que remove e retorna o primeiro elemento da fila.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <returns>O primeiro elemento da fila</returns>
         public T Dequeue()
         {
             if(_storage.Count == 0)
@@ -60,8 +68,7 @@ namespace DataStructures.Listas
         }
 
         /// <summary>
-        /// <para>Limpa a fila</para>
-        /// <para>Complexidade de O(1)</para>
+        /// Método que remove todos os elementos da fila.
         /// </summary>
         public void Clear()
         {
@@ -69,11 +76,18 @@ namespace DataStructures.Listas
         }
 
         #region Enumerable
+
+        /// <summary>
+        /// Método que retorna um enumerador que itera por uma fila.
+        /// </summary>
         public IEnumerator<T> GetEnumerator()
         {
             return new QueueEnumerator<T>(_storage);
         }
 
+        /// <summary>
+        /// Método que retorna um enumerador que itera por uma fila.
+        /// </summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return new QueueEnumerator<T>(_storage);
