@@ -9,3 +9,6 @@ Um repositório para registrar os meus estudos voltados a escrita de estrutura d
 - LinkedList (Estrutura de lista encadeada)
 - DoubleLinkedList (Estrutura de lista duplamente encadeada)
 - HashTable (Bom... é uma HashTable)
+
+## Em progresso:
+- BinaryTree (Estrutura de árvore binária)
