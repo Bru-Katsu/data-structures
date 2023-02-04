@@ -2,8 +2,12 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace DataStructures.Listas
+namespace DataStructures.Collections
 {
+    /// <summary>
+    /// Representa uma lista duplamente encadeada.
+    /// </summary>
+    /// <typeparam name="T">O tipo de elementos na lista encadeada.</typeparam>
     [ComVisible(true)]
     [DebuggerDisplay("Count = {Count}")]
     public class DoubleLinkedList<T> : IEnumerable<T>
@@ -12,7 +16,15 @@ namespace DataStructures.Listas
         private DoubleLinkedNode<T> _tail;
         private int _lenght;
 
+        /// <summary>
+        /// Inicializa uma nova instância da classe <see cref="DoubleLinkedList{T}"/>.
+        /// </summary>
         public DoubleLinkedList() { }
+
+        /// <summary>
+        /// Inicializa uma nova instância da classe <see cref="DoubleLinkedList{T}"/> com um item inicial.
+        /// </summary>
+        /// <param name="item">O item inicial da lista encadeada.</param>
         public DoubleLinkedList(T item)
         {
             Initialize(item);
@@ -23,25 +35,38 @@ namespace DataStructures.Listas
         /// </summary>
         /// <param name="index">posição</param>
         /// <returns><see cref="T"/></returns>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException">Se a posição estiver fora do tamanho da lista.</exception>
         public T this[int index]
         {
             get => GetItemAt(index);
             set => InsertAt(index, value);
         }
 
+        /// <summary>
+        /// Obtém o número de itens na lista encadeada.
+        /// </summary>
         public int Count => _lenght;
 
+        /// <summary>
+        /// Obtém o nó inicial da lista encadeada.
+        /// </summary>
         public DoubleLinkedNode<T> Head => _head;
+
+        /// <summary>
+        /// Obtém o nó final da lista encadeada.
+        /// </summary>
         public DoubleLinkedNode<T> Tail => _tail;
 
         /// <summary>
-        /// <para>Adiciona um valor ao final da lista</para>
-        /// <para>Complexidade de O(1)</para>
+        /// Adiciona um item no início da lista encadeada.
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">O item a ser adicionado no início da lista encadeada.</param>
+        /// <exception cref="ArgumentNullException">Se o item estiver nulo.</exception>
         public void AddLast(T item)
         {
+            if (item == null)
+                throw new ArgumentNullException(nameof(item), "Não é permitido valores nulos!");
+
             if (_tail == null)
             {
                 Initialize(item);
@@ -57,12 +82,15 @@ namespace DataStructures.Listas
         }
 
         /// <summary>
-        /// <para>Adiciona um valor no início da lista</para>
-        /// <para>Complexidade de O(1)</para>
+        /// Insere um item na posição especificada na lista encadeada.
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">O item a ser adicionado no final da lista encadeada.</param>
+        /// <exception cref="ArgumentNullException">Se o item estiver nulo.</exception>
         public void AddFirst(T item)
         {
+            if (item == null)
+                throw new ArgumentNullException(nameof(item), "Não é permitido valores nulos!");
+
             if (_head == null)
             {
                 Initialize(item);
@@ -78,11 +106,20 @@ namespace DataStructures.Listas
         }
 
         /// <summary>
-        /// <para>Adiciona um valor na posição informada</para>
-        /// <para>Complexidade de O(n)</para>
+        /// Insere um item na posição especificada na lista encadeada.
         /// </summary>
-        /// <param name="item"></param>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <param name="item">O item a ser adicionado no final da lista encadeada.</param>
+        public void Add(T item)
+        {
+            AddLast(item);
+        }
+
+        /// <summary>
+        /// Insere um item em uma posição específica na lista encadeada.
+        /// </summary>
+        /// <param name="index">A posição onde o item será inserido.</param>
+        /// <param name="item">O item a ser inserido.</param>
+        /// <exception cref="ArgumentOutOfRangeException">Se a posição estiver fora do tamanho da lista.</exception>
         public void InsertAt(int index, T item)
         {
             ThrowIfGreaterThanIndexRange(index);
@@ -112,10 +149,9 @@ namespace DataStructures.Listas
         }
 
         /// <summary>
-        /// <para>Remove o primeiro valor da lista</para>
-        /// <para>Complexidade de O(1)</para>
+        /// Remove o primeiro item da lista encadeada.
         /// </summary>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="InvalidOperationException">Se a lista estiver vazia.</exception>
         public void RemoveFirst()
         {
             if (_head == null)
@@ -138,10 +174,9 @@ namespace DataStructures.Listas
         }
 
         /// <summary>
-        /// <para>Remove o último valor da lista</para>
-        /// <para>Complexidade de O(1)</para>
+        /// Remove o último item da lista encadeada.
         /// </summary>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="InvalidOperationException">Se a lista estiver vazia.</exception>
         public void RemoveLast()
         {
             if (_tail == null)
@@ -164,11 +199,10 @@ namespace DataStructures.Listas
         }
 
         /// <summary>
-        /// <para>Remove valor na posição informada</para>
-        /// <para>Complexidade de O(n)</para>
+        /// Remove o item em uma posição específica da lista encadeada.
         /// </summary>
-        /// <param name="value"></param>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <param name="index">A posição do item a ser removido.</param>
+        /// <exception cref="ArgumentOutOfRangeException">Se a posição estiver fora do tamanho da lista.</exception>
         public void RemoveAt(int index)
         {
             ThrowIfNotInIndexRange(index);
@@ -190,11 +224,11 @@ namespace DataStructures.Listas
         }
 
         /// <summary>
-        /// <para>Busca valor na posição informada</para>
-        /// <para>Complexidade de O(n)</para>
+        /// Obtém o item em uma posição específica na lista encadeada.
         /// </summary>
-        /// <param name="value"></param>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <param name="index">A posição do item a ser obtido.</param>
+        /// <returns>O item na posição especificada.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Se a posição estiver fora do tamanho da lista.</exception>
         public T GetItemAt(int index)
         {
             ThrowIfNotInIndexRange(index);
@@ -208,23 +242,9 @@ namespace DataStructures.Listas
         }
 
         /// <summary>
-        /// <para>Retorna o último registro da lista</para>
-        /// <para>Complexidade de O(1)</para>
+        /// Obtém o primeiro item da lista encadeada.
         /// </summary>
-        /// <returns></returns>
-        public T GetLast()
-        {
-            if (_tail == null)
-                return default;
-
-            return _tail.Value;
-        }
-
-        /// <summary>
-        /// <para>Retorna o primeiro registro da lista</para>
-        /// <para>Complexidade de O(1)</para>
-        /// </summary>
-        /// <returns></returns>
+        /// <returns>O primeiro item da lista encadeada.</returns>
         public T GetFirst()
         {
             if (_head == null)
@@ -234,18 +254,19 @@ namespace DataStructures.Listas
         }
 
         /// <summary>
-        /// <para>Adiciona um valor ao final da lista</para>
-        /// <para>Complexidade de O(1)</para>
+        /// Obtém o último item da lista encadeada.
         /// </summary>
-        /// <param name="value"></param>
-        public void Add(T item)
+        /// <returns>O último item da lista encadeada.</returns>
+        public T GetLast()
         {
-            AddLast(item);
+            if (_tail == null)
+                return default;
+
+            return _tail.Value;
         }
 
         /// <summary>
-        /// <para>Limpa a lista</para>
-        /// <para>Complexidade de O(n)</para>
+        /// Remove todos os itens da lista encadeada.
         /// </summary>
         public void Clear()
         {

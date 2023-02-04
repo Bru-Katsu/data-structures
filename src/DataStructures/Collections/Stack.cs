@@ -5,10 +5,10 @@ using System.Runtime.InteropServices;
 namespace DataStructures.Collections
 {
     /// <summary>
-    /// A classe `Stack` representa uma estrutura de dados LIFO (Last In First Out). 
-    /// Os itens são adicionados e removidos apenas na extremidade superior da pilha. 
-    /// A classe é implementada usando uma lista duplamente encadeada.
+    /// Representa uma pilha (Last In First Out).
+    /// Implementada utilizando uma lista encadeada.
     /// </summary>
+    /// <typeparam name="T">O tipo de elementos na pilha.</typeparam>
     [ComVisible(true)]
     [DebuggerDisplay("Count = {Count}")]
     public class Stack<T> : IEnumerable<T>

@@ -1,5 +1,5 @@
 ﻿
-using DataStructures.Listas;
+using DataStructures.Collections;
 using System;
 using System.Linq;
 using Xunit;

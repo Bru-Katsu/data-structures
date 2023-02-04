@@ -231,17 +231,17 @@ namespace DataStructures.Hashs
         private HashBucketNode<T> _tail;
 
         /// <summary>
-        /// A propriedade `Length` retorna a quantidade de elementos armazenados na lista.
+        /// A propriedade retorna a quantidade de elementos armazenados na lista.
         /// </summary>
         public int Length => _length;
 
         /// <summary>
-        /// A propriedade `Head` retorna o primeiro elemento da lista.
+        /// A propriedade retorna o primeiro elemento da lista.
         /// </summary>
         public HashBucketNode<T> Head => _head;
 
         /// <summary>
-        /// A propriedade `Tail` retorna o último elemento da lista.
+        /// A propriedade retorna o último elemento da lista.
         /// </summary>
         public HashBucketNode<T> Tail => _tail;
 

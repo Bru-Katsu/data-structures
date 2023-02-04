@@ -5,8 +5,10 @@ using System.Runtime.InteropServices;
 namespace DataStructures.Collections
 {
     /// <summary>
-    /// Classe Queue, implementação de uma fila (First-In, First-Out) utilizando uma lista encadeada.
+    /// Representa uma fila (First-In, First-Out).
+    /// Implementada utilizando uma lista encadeada.
     /// </summary>
+    /// <typeparam name="T">O tipo de elementos na fila.</typeparam>
     [ComVisible(true)]
     [DebuggerDisplay("Count = {Count}")]
     public class Queue<T> : IEnumerable<T>
@@ -14,7 +16,7 @@ namespace DataStructures.Collections
         private readonly LinkedList<T> _storage;
 
         /// <summary>
-        /// Construtor padrão que inicializa uma nova instância da classe Queue.
+        /// Construtor padrão que inicializa uma nova instância da classe <see cref="Queue{T}"/>.
         /// </summary>
         public Queue()
         {
@@ -22,12 +24,12 @@ namespace DataStructures.Collections
         }
 
         /// <summary>
-        /// Propriedade que obtém o número de elementos na fila.
+        /// Obtém o número de elementos na fila.
         /// </summary>
         public int Count => _storage.Count;
 
         /// <summary>
-        /// Propriedade que obtém um valor que indica se a fila está vazia.
+        /// Obtém um valor que indica se a fila está vazia.
         /// </summary>
         public bool IsEmpty => Count == 0;
 

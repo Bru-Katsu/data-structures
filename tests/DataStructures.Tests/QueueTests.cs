@@ -1,14 +1,14 @@
-﻿using DataStructures.Listas;
-using System;
+﻿using DataStructures.Collections;
 using Xunit;
 
 namespace DataStructures.Tests
 {
     public class QueueTests
     {
+        #region Peek
         [Fact(DisplayName = "Ao espiar, deve retornar o primeiro elemento da fila")]
         [Trait(nameof(Queue<int>), nameof(Queue<int>.Peek))]
-        public void Espiar_FilaComItens_DeveRetornarPrimeiroElementoDaFila()
+        public void Peek_FilaComItens_DeveRetornarPrimeiroElementoDaFila()
         {
             //arrange
             var fila = new Queue<int>();
@@ -23,10 +23,12 @@ namespace DataStructures.Tests
             //assert
             Assert.Equal(valor, observado);
         }
+        #endregion
 
+        #region Enqueue
         [Fact(DisplayName = "Ao enfileirar, o tamanho da fila deve ser incrementado")]
         [Trait(nameof(Queue<int>), nameof(Queue<int>.Enqueue))]
-        public void Enfileirar_NovaFila_DeveIncrementarTamanho()
+        public void Enqueue_NovaFila_DeveIncrementarTamanho()
         {
             //arrange
             var fila = new Queue<int>();
@@ -42,7 +44,7 @@ namespace DataStructures.Tests
 
         [Fact(DisplayName = "Ao enfileirar, a fila não pode ser vazia")]
         [Trait(nameof(Queue<int>), nameof(Queue<int>.Enqueue))]
-        public void Enfileirar_NovaFila_NaoPodeSerVazia()
+        public void Enqueue_NovaFila_NaoPodeSerVazia()
         {
             //arrange
             var fila = new Queue<int>();
@@ -53,10 +55,12 @@ namespace DataStructures.Tests
             //assert
             Assert.False(fila.IsEmpty);
         }
+        #endregion
 
+        #region Dequeue
         [Fact(DisplayName = "Ao desenfileirar, deve retornar o primeiro elemento adicionado")]
         [Trait(nameof(Queue<int>), nameof(Queue<int>.Dequeue))]
-        public void Desenfileirar_FilaComItens_DeveRetornarPrimeiroElementoDaFila()
+        public void Dequeue_FilaComItens_DeveRetornarPrimeiroElementoDaFila()
         {
             //arrange
             var fila = new Queue<int>();
@@ -78,7 +82,7 @@ namespace DataStructures.Tests
 
         [Fact(DisplayName = "Ao desenfileirar todos os itens, a fila deve estar vazia")]
         [Trait(nameof(Queue<int>), nameof(Queue<int>.Dequeue))]
-        public void Desenfileirar_FilaComItens_DeveEstarVazia()
+        public void Dequeue_FilaComItens_DeveEstarVazia()
         {
             //arrange
             var fila = new Queue<int>();
@@ -96,7 +100,9 @@ namespace DataStructures.Tests
             //assert
             Assert.True(fila.IsEmpty);            
         }
+        #endregion
 
+        #region Clear
         [Fact(DisplayName = "Ao criar uma fila, o tamanho deve ser zero")]
         [Trait(nameof(Queue<int>), nameof(Queue<int>.Clear))]
         public void Clear_FilaComItens_AoLimparQuantidadeDeRegistrosDeveSerZerado()
@@ -114,7 +120,9 @@ namespace DataStructures.Tests
             //assert
             Assert.Equal(0, fila.Count);
         }
+        #endregion
 
+        #region New Instance
         [Fact(DisplayName = "Ao criar uma fila, o tamanho deve ser zero")]
         [Trait(nameof(Queue<int>), "Instânciar")]
         public void Instanciar_FilaSemItens_TamanhoDeveSerZero()
@@ -125,5 +133,6 @@ namespace DataStructures.Tests
             //assert
             Assert.Equal(0, filaSemCapacidade.Count);
         }
+        #endregion
     }
 }

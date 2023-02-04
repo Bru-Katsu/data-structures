@@ -1,4 +1,4 @@
-﻿using DataStructures.Listas;
+﻿using DataStructures.Collections;
 using System;
 using Xunit;
 
@@ -6,6 +6,7 @@ namespace DataStructures.Tests
 {
     public class StackTests
     {
+        #region Push
         [Fact(DisplayName = "Ao empilhar, o elemento deve estar no topo")]
         [Trait(nameof(Stack<int>), nameof(Stack<int>.Push))]
         public void Empilhar_PilhaVazia_ElementoDeveEstarNoTopo()
@@ -21,7 +22,9 @@ namespace DataStructures.Tests
             //assert
             Assert.Equal(valor, pilha.Peek());
         }
+        #endregion
 
+        #region Pop
         [Fact(DisplayName = "Ao tentar desempilhar uma pilha vazia, deve estourar exception")]
         [Trait(nameof(Stack<int>), nameof(Stack<int>.Pop))]
         public void Desempilhar_PilhaVazia_DeveEstourarException()
@@ -70,7 +73,9 @@ namespace DataStructures.Tests
             //assert
             Assert.Equal(ultimoElemento, elemento);
         }
+        #endregion
 
+        #region New Instance
         [Fact(DisplayName = "Ao criar uma pilha sem itens, o tamanho deve ser igual a zero")]
         [Trait(nameof(Stack<int>), "Instânciar")]
         public void Instanciar_PilhaSemItens_TamanhoDeveSerZero()
@@ -81,5 +86,6 @@ namespace DataStructures.Tests
             //act & assert
             Assert.Equal(0, pilha.Count);
         }
+        #endregion
     }
 }
