@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 namespace DataStructures.Collections
 {
@@ -9,9 +10,10 @@ namespace DataStructures.Collections
     /// Implementada utilizando uma lista encadeada.
     /// </summary>
     /// <typeparam name="T">O tipo de elementos na fila.</typeparam>
+    [Serializable]
     [ComVisible(true)]
     [DebuggerDisplay("Count = {Count}")]
-    public class Queue<T> : IEnumerable<T>
+    public class Queue<T> : ICollection<T>, ISerializable
     {
         private readonly LinkedList<T> _storage;
 
@@ -32,6 +34,11 @@ namespace DataStructures.Collections
         /// Obtém um valor que indica se a fila está vazia.
         /// </summary>
         public bool IsEmpty => Count == 0;
+
+        /// <summary>
+        /// Obtém um valor que indica se a fila é somente leitura.
+        /// </summary>
+        public bool IsReadOnly => false;
 
         /// <summary>
         /// Método que retorna o primeiro elemento da fila sem removê-lo.
@@ -69,13 +76,31 @@ namespace DataStructures.Collections
             return value;
         }
 
-        /// <summary>
-        /// Método que remove todos os elementos da fila.
-        /// </summary>
-        public void Clear()
+        #region Serializable
+        protected Queue(SerializationInfo info, StreamingContext context)
         {
-            _storage.Clear();
+            _storage = new LinkedList<T>();
+
+            int count = (int)info.GetValue("Count", typeof(int));
+            for (int i = 0; i < count; i++)
+            {
+                T item = (T)info.GetValue("Item" + i, typeof(T));
+                _storage.AddLast(item);
+            }
         }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Count", Count);
+
+            int index = 0;
+            foreach (T item in this)
+            {
+                info.AddValue("Item" + index, item);
+                index++;
+            }
+        }
+        #endregion
 
         #region Enumerable
 
@@ -126,6 +151,36 @@ namespace DataStructures.Collections
             {
                 _current = null;
             }
+        }
+        #endregion
+
+        #region Collection
+        void ICollection<T>.Add(T item)
+        {
+            _storage.AddLast(item);
+        }
+
+        bool ICollection<T>.Contains(T item)
+        {
+            throw new NotSupportedException();
+        }
+
+        void ICollection<T>.CopyTo(T[] array, int arrayIndex)
+        {
+            throw new NotSupportedException();
+        }
+
+        bool ICollection<T>.Remove(T item)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Método que remove todos os elementos da fila.
+        /// </summary>
+        public void Clear()
+        {
+            _storage.Clear();
         }
         #endregion
     }

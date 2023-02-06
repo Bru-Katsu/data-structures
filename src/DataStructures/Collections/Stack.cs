@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 namespace DataStructures.Collections
 {
@@ -9,9 +10,10 @@ namespace DataStructures.Collections
     /// Implementada utilizando uma lista encadeada.
     /// </summary>
     /// <typeparam name="T">O tipo de elementos na pilha.</typeparam>
+    [Serializable]
     [ComVisible(true)]
     [DebuggerDisplay("Count = {Count}")]
-    public class Stack<T> : IEnumerable<T>
+    public class Stack<T> : ICollection<T>, ISerializable
     {
         private readonly DoubleLinkedList<T> _storage;
 
@@ -32,6 +34,11 @@ namespace DataStructures.Collections
         /// Obtém um valor que indica se a pilha está vazia.
         /// </summary>
         public bool IsEmpty => Count == 0;
+
+        /// <summary>
+        /// Obtém um valor que indica se a pilha é somente leitura.
+        /// </summary>
+        public bool IsReadOnly => false;
 
         /// <summary>
         /// Obtém o elemento no topo da pilha sem removê-lo.
@@ -73,6 +80,32 @@ namespace DataStructures.Collections
 
             return lastItem;
         }
+
+        #region Serializable
+        protected Stack(SerializationInfo info, StreamingContext context)
+        {
+            _storage = new DoubleLinkedList<T>();
+
+            int count = (int)info.GetValue("Count", typeof(int));
+            for (int i = 0; i < count; i++)
+            {
+                T item = (T)info.GetValue("Item" + i, typeof(T));
+                _storage.AddFirst(item);
+            }
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Count", Count);
+
+            int index = 0;
+            foreach (T item in this)
+            {
+                info.AddValue("Item" + index, item);
+                index++;
+            }
+        }
+        #endregion
 
         #region Enumerable
         /// <summary>
@@ -125,6 +158,36 @@ namespace DataStructures.Collections
             {
                 _current = null;
             }
+        }
+        #endregion
+
+        #region Collection
+        void ICollection<T>.Add(T item)
+        {
+            if (item == null)
+                throw new ArgumentNullException(nameof(item), "Não é permitido valores nulos!");
+
+            _storage.AddFirst(item);
+        }
+
+        public void Clear()
+        {
+            _storage.Clear();
+        }
+
+        bool ICollection<T>.Contains(T item)
+        {
+            throw new NotSupportedException();
+        }
+
+        void ICollection<T>.CopyTo(T[] array, int arrayIndex)
+        {
+            throw new NotSupportedException();
+        }
+
+        bool ICollection<T>.Remove(T item)
+        {
+            throw new NotSupportedException();
         }
         #endregion
     }

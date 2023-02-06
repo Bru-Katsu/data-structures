@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 namespace DataStructures.Collections
 {
@@ -8,9 +9,10 @@ namespace DataStructures.Collections
     /// Representa uma lista duplamente encadeada.
     /// </summary>
     /// <typeparam name="T">O tipo de elementos na lista encadeada.</typeparam>
+    [Serializable]
     [ComVisible(true)]
     [DebuggerDisplay("Count = {Count}")]
-    public class DoubleLinkedList<T> : IEnumerable<T>
+    public class DoubleLinkedList<T> : ICollection<T>, ISerializable
     {
         private DoubleLinkedNode<T> _head;
         private DoubleLinkedNode<T> _tail;
@@ -58,31 +60,12 @@ namespace DataStructures.Collections
         public DoubleLinkedNode<T> Tail => _tail;
 
         /// <summary>
-        /// Adiciona um item no início da lista encadeada.
+        /// Obtém um valor que indica se a lista encadeada é somente leitura.
         /// </summary>
-        /// <param name="item">O item a ser adicionado no início da lista encadeada.</param>
-        /// <exception cref="ArgumentNullException">Se o item estiver nulo.</exception>
-        public void AddLast(T item)
-        {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item), "Não é permitido valores nulos!");
-
-            if (_tail == null)
-            {
-                Initialize(item);
-                return;
-            }
-
-            var newNode = new DoubleLinkedNode<T>(item, _tail);
-
-            _tail.SetNext(newNode);
-            _tail = _tail.Next;
-
-            _lenght++;
-        }
+        public bool IsReadOnly => false;
 
         /// <summary>
-        /// Insere um item na posição especificada na lista encadeada.
+        /// Adiciona um item no início da lista encadeada.
         /// </summary>
         /// <param name="item">O item a ser adicionado no final da lista encadeada.</param>
         /// <exception cref="ArgumentNullException">Se o item estiver nulo.</exception>
@@ -106,12 +89,27 @@ namespace DataStructures.Collections
         }
 
         /// <summary>
-        /// Insere um item na posição especificada na lista encadeada.
+        /// Adiciona um item no fim da lista encadeada.
         /// </summary>
-        /// <param name="item">O item a ser adicionado no final da lista encadeada.</param>
-        public void Add(T item)
+        /// <param name="item">O item a ser adicionado no início da lista encadeada.</param>
+        /// <exception cref="ArgumentNullException">Se o item estiver nulo.</exception>
+        public void AddLast(T item)
         {
-            AddLast(item);
+            if (item == null)
+                throw new ArgumentNullException(nameof(item), "Não é permitido valores nulos!");
+
+            if (_tail == null)
+            {
+                Initialize(item);
+                return;
+            }
+
+            var newNode = new DoubleLinkedNode<T>(item, _tail);
+
+            _tail.SetNext(newNode);
+            _tail = _tail.Next;
+
+            _lenght++;
         }
 
         /// <summary>
@@ -152,10 +150,12 @@ namespace DataStructures.Collections
         /// Remove o primeiro item da lista encadeada.
         /// </summary>
         /// <exception cref="InvalidOperationException">Se a lista estiver vazia.</exception>
-        public void RemoveFirst()
+        public T RemoveFirst()
         {
             if (_head == null)
                 throw new InvalidOperationException("Não há itens na lista!");
+
+            T value = _head.Value;
 
             if (_head.Next == null)
             {
@@ -171,16 +171,20 @@ namespace DataStructures.Collections
             }
 
             _lenght--;
+
+            return value;
         }
 
         /// <summary>
         /// Remove o último item da lista encadeada.
         /// </summary>
         /// <exception cref="InvalidOperationException">Se a lista estiver vazia.</exception>
-        public void RemoveLast()
+        public T RemoveLast()
         {
             if (_tail == null)
                 throw new InvalidOperationException("Não há itens na lista!");
+
+            T value = _tail.Value;
 
             if (_tail.Previous == null)
             {
@@ -196,6 +200,8 @@ namespace DataStructures.Collections
             }
 
             _lenght--;
+
+            return value;
         }
 
         /// <summary>
@@ -203,24 +209,29 @@ namespace DataStructures.Collections
         /// </summary>
         /// <param name="index">A posição do item a ser removido.</param>
         /// <exception cref="ArgumentOutOfRangeException">Se a posição estiver fora do tamanho da lista.</exception>
-        public void RemoveAt(int index)
+        public T RemoveAt(int index)
         {
             ThrowIfNotInIndexRange(index);
+            T value;
 
             if (index == 0)
-                RemoveFirst();
+                value = RemoveFirst();
             else if (index == _lenght - 1)
-                RemoveLast();
+                value = RemoveLast();
             else
             {
                 DoubleLinkedNode<T> previousNode = TraverseTo(index - 1);
                 DoubleLinkedNode<T> currentNode = previousNode.Next;
+
+                value = currentNode.Value;
 
                 previousNode?.SetNext(currentNode.Next);
                 currentNode.Next.SetPrevious(previousNode);
 
                 _lenght--;
             }
+
+            return value;
         }
 
         /// <summary>
@@ -263,16 +274,6 @@ namespace DataStructures.Collections
                 return default;
 
             return _tail.Value;
-        }
-
-        /// <summary>
-        /// Remove todos os itens da lista encadeada.
-        /// </summary>
-        public void Clear()
-        {
-            _head = null;
-            _tail = null;
-            _lenght = 0;
         }
 
         #region Enumerable
@@ -321,6 +322,65 @@ namespace DataStructures.Collections
         }
         #endregion
 
+        #region Collection
+        /// <summary>
+        /// Insere um item ao final da lista encadeada.
+        /// </summary>
+        /// <param name="item">O item a ser adicionado no final da lista encadeada.</param>
+        public void Add(T item)
+        {
+            AddLast(item);
+        }
+
+        bool ICollection<T>.Contains(T item)
+        {
+            throw new NotSupportedException();
+        }
+
+        void ICollection<T>.CopyTo(T[] array, int arrayIndex)
+        {
+            throw new NotSupportedException();
+        }
+
+        bool ICollection<T>.Remove(T item)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Remove todos os itens da lista encadeada.
+        /// </summary>
+        public void Clear()
+        {
+            _head = null;
+            _tail = null;
+            _lenght = 0;
+        }
+        #endregion
+
+        #region Serializable
+        protected DoubleLinkedList(SerializationInfo info, StreamingContext context)
+        {
+            int count = (int)info.GetValue("Count", typeof(int));
+            for (int i = 0; i < count; i++)
+            {
+                T item = (T)info.GetValue("Item" + i, typeof(T));
+                AddLast(item);
+            }
+        }
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Count", Count);
+
+            int index = 0;
+            foreach (T item in this)
+            {
+                info.AddValue("Item" + index, item);
+                index++;
+            }
+        }
+        #endregion
+
         private void Initialize(T value)
         {
             _head = new DoubleLinkedNode<T>(value);
@@ -355,11 +415,10 @@ namespace DataStructures.Collections
             if (index > _lenght - 1)
                 throw new ArgumentOutOfRangeException(nameof(index), "Posição fora do tamanho da lista!");
         }
-
     }
 
     /// <summary>
-    /// Classe DoubleLinkedNode que representa um nó de uma lista encadeada duplamente ligada.
+    /// Classe DoubleLinkedNode que representa um nó de uma lista duplamente encadeada da classe <see cref="DoubleLinkedList{T}"/>.
     /// </summary>
     /// <typeparam name="T">O tipo de valor armazenado pelo nó</typeparam>
     public class DoubleLinkedNode<T>

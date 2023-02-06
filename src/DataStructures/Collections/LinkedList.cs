@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 namespace DataStructures.Collections
 {
@@ -8,9 +9,10 @@ namespace DataStructures.Collections
     /// Representa uma lista encadeada.
     /// </summary>
     /// <typeparam name="T">O tipo de elementos na lista encadeada.</typeparam>
+    [Serializable]
     [ComVisible(true)]
     [DebuggerDisplay("Count = {Count}")]
-    public class LinkedList<T> : IEnumerable<T>
+    public class LinkedList<T> : ICollection<T>, ISerializable
     {
         private int _lenght;
         private LinkedNode<T> _head;
@@ -57,6 +59,11 @@ namespace DataStructures.Collections
         public LinkedNode<T> Tail => _tail;
 
         /// <summary>
+        /// Obtém um valor que indica se a lista encadeada é somente leitura.
+        /// </summary>
+        public bool IsReadOnly => false;
+
+        /// <summary>
         /// Adiciona um item no início da lista encadeada.
         /// </summary>
         /// <param name="item">O item a ser adicionado no início da lista encadeada.</param>
@@ -80,7 +87,7 @@ namespace DataStructures.Collections
         }
 
         /// <summary>
-        /// Insere um item na posição especificada na lista encadeada.
+        /// Adiciona um item no fim da lista encadeada.
         /// </summary>
         /// <param name="item">O item a ser adicionado no final da lista encadeada.</param>
         /// <exception cref="ArgumentNullException">Se o item estiver nulo.</exception>
@@ -98,15 +105,6 @@ namespace DataStructures.Collections
             _tail.SetNext(new LinkedNode<T>(item));
             _tail = _tail.Next;
             _lenght++;
-        }
-
-        /// <summary>
-        /// Insere um item na posição especificada na lista encadeada.
-        /// </summary>
-        /// <param name="item">O item a ser adicionado no final da lista encadeada.</param>
-        public void Add(T item)
-        {
-            AddLast(item);
         }
 
         /// <summary>
@@ -140,12 +138,14 @@ namespace DataStructures.Collections
         /// <summary>
         /// Remove o primeiro item da lista encadeada.
         /// </summary>
+        /// <returns>O primeiro item da lista encadeada.</returns>
         /// <exception cref="InvalidOperationException">Se a lista estiver vazia.</exception>
-        public void RemoveFirst()
+        public T RemoveFirst()
         {
             if (_head == null)
                 throw new InvalidOperationException("Não há itens na lista!");
 
+            T value = _head.Value;
             if (_head.Next == null)
             {
                 _head = null;
@@ -158,16 +158,20 @@ namespace DataStructures.Collections
             }
 
             _lenght--;
+            return value;
         }
 
         /// <summary>
         /// Remove o último item da lista encadeada.
         /// </summary>
+        /// <returns>O último item da lista encadeada.</returns>
         /// <exception cref="InvalidOperationException">Se a lista estiver vazia.</exception>
-        public void RemoveLast()
+        public T RemoveLast()
         {
             if (_tail == null)
                 throw new InvalidOperationException("Não há itens na lista!");
+
+            T value = _tail.Value;
 
             if (_head.Next == null && _lenght == 1)
             {
@@ -182,29 +186,36 @@ namespace DataStructures.Collections
             }
 
             _lenght--;
+            return value;
         }
 
         /// <summary>
         /// Remove o item em uma posição específica da lista encadeada.
         /// </summary>
         /// <param name="index">A posição do item a ser removido.</param>
+        /// <returns>O item na posição especificada.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Se a posição estiver fora do tamanho da lista.</exception>
-        public void RemoveAt(int index)
+        public T RemoveAt(int index)
         {
             ThrowIfNotInIndexRange(index);
+            T value;
 
             if (index == 0)
-                RemoveFirst();
+                value = RemoveFirst();
             else if (index == _lenght - 1)
-                RemoveLast();
+                value = RemoveLast();
             else
             {
+
                 LinkedNode<T>? previousNode = TraverseTo(index - 1);
                 LinkedNode<T> currentNode = previousNode.Next;
+                value = currentNode.Value;
 
                 previousNode?.SetNext(currentNode.Next);
                 _lenght--;
             }
+
+            return value;
         }
 
         /// <summary>
@@ -239,7 +250,7 @@ namespace DataStructures.Collections
 
         /// <summary>
         /// Obtém o último item da lista encadeada.
-        /// </summary>
+        /// </summary>'
         /// <returns>O último item da lista encadeada.</returns>
         public T GetLast()
         {
@@ -269,16 +280,6 @@ namespace DataStructures.Collections
 
             _head = previous;
             _tail = newTail;
-        }
-
-        /// <summary>
-        /// Remove todos os itens da lista encadeada.
-        /// </summary>
-        public void Clear()
-        {
-            _head = null;
-            _tail = null;
-            _lenght = 0;
         }
 
         private void Initialize(T item)
@@ -359,6 +360,65 @@ namespace DataStructures.Collections
             public void Reset()
             {
                 _current = default;
+            }
+        }
+        #endregion
+
+        #region Collection
+        /// <summary>
+        /// Insere um item na posição especificada na lista encadeada.
+        /// </summary>
+        /// <param name="item">O item a ser adicionado no final da lista encadeada.</param>
+        public void Add(T item)
+        {
+            AddLast(item);
+        }
+
+        bool ICollection<T>.Contains(T item)
+        {
+            throw new NotSupportedException();
+        }
+
+        void ICollection<T>.CopyTo(T[] array, int arrayIndex)
+        {
+            throw new NotSupportedException();
+        }
+
+        bool ICollection<T>.Remove(T item)
+        {
+            throw new NotSupportedException();
+        }
+        /// <summary>
+        /// Remove todos os itens da lista encadeada.
+        /// </summary>
+        public void Clear()
+        {
+            _head = null;
+            _tail = null;
+            _lenght = 0;
+        }
+        #endregion
+
+        #region Serializable
+        protected LinkedList(SerializationInfo info, StreamingContext context)
+        {
+            int count = (int)info.GetValue("Count", typeof(int));
+            for (int i = 0; i < count; i++)
+            {
+                T item = (T)info.GetValue("Item" + i, typeof(T));
+                AddLast(item);
+            }
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Count", Count);
+
+            int index = 0;
+            foreach (T item in this)
+            {
+                info.AddValue("Item" + index, item);
+                index++;
             }
         }
         #endregion

@@ -2,6 +2,7 @@
 using DataStructures.Collections;
 using System;
 using System.Linq;
+using System.Text.Json;
 using Xunit;
 
 namespace DataStructures.Tests
@@ -199,6 +200,45 @@ namespace DataStructures.Tests
             Assert.Equal(16, list.FirstOrDefault(x => x.Equals(16)));
             Assert.Equal(15, list.FirstOrDefault(x => x.Equals(15)));
             Assert.Equal(1, list.FirstOrDefault(x => x.Equals(1)));
+        }
+        #endregion
+
+        #region Serialize
+        [Fact(DisplayName = "Ao seriaizar, deve conter itens em ordem")]
+        [Trait(nameof(LinkedList<int>), "Serialize")]
+        public void Serialize_PilhaSemItens_TamanhoDeveSerZero()
+        {
+            //arrange
+            var pilha = new LinkedList<int>();
+            pilha.Add(0);
+            pilha.Add(10);
+            pilha.Add(20);
+            //act
+            var json = JsonSerializer.Serialize(pilha);
+
+            //assert
+            Assert.Equal("[0,10,20]", json);
+        }
+
+        [Fact(DisplayName = "Ao deserializar, deve conter itens em ordem")]
+        [Trait(nameof(LinkedList<int>), "Deserialize")]
+        public void Deserialize_LinkedList_TamanhoDeveSerZero()
+        {
+            //arrange
+            var pilha = new LinkedList<int>();
+            pilha.Add(0);
+            pilha.Add(10);
+            pilha.Add(20);
+
+            var json = JsonSerializer.Serialize(pilha);
+
+            //act
+            var deserialized = JsonSerializer.Deserialize<LinkedList<int>>(json);
+
+            //assert
+            Assert.Equal(0, deserialized.RemoveFirst());
+            Assert.Equal(10, deserialized.RemoveFirst());
+            Assert.Equal(20, deserialized.RemoveFirst());
         }
         #endregion
     }

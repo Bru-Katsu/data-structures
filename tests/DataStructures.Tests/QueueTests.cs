@@ -1,4 +1,5 @@
 ﻿using DataStructures.Collections;
+using System.Text.Json;
 using Xunit;
 
 namespace DataStructures.Tests
@@ -132,6 +133,45 @@ namespace DataStructures.Tests
 
             //assert
             Assert.Equal(0, filaSemCapacidade.Count);
+        }
+        #endregion
+
+        #region Serialize
+        [Fact(DisplayName = "Ao seriaizar, deve conter itens em ordem do último para o primeiro")]
+        [Trait(nameof(Queue<int>), "Serialize")]
+        public void Serialize_PilhaSemItens_TamanhoDeveSerZero()
+        {
+            //arrange
+            var pilha = new Queue<int>();
+            pilha.Enqueue(0);
+            pilha.Enqueue(10);
+            pilha.Enqueue(20);
+            //act
+            var json = JsonSerializer.Serialize(pilha);
+
+            //assert
+            Assert.Equal("[0,10,20]", json);
+        }
+
+        [Fact(DisplayName = "Ao deseriaizar, deve conter itens em ordem do último para o primeiro")]
+        [Trait(nameof(Queue<int>), "Deserialize")]
+        public void Deserialize_PilhaSemItens_TamanhoDeveSerZero()
+        {
+            //arrange
+            var pilha = new Queue<int>();
+            pilha.Enqueue(0);
+            pilha.Enqueue(10);
+            pilha.Enqueue(20);
+
+            var json = JsonSerializer.Serialize(pilha);
+
+            //act
+            var deserialized = JsonSerializer.Deserialize<Queue<int>>(json);
+
+            //assert
+            Assert.Equal(0, deserialized.Dequeue());
+            Assert.Equal(10, deserialized.Dequeue());
+            Assert.Equal(20, deserialized.Dequeue());
         }
         #endregion
     }
