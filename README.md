@@ -1,14 +1,13 @@
 # Data Structures
-
 Um repositório para registrar os meus estudos voltados a escrita de estrutura de dados no .NET com C#
-
-
-## Estruturas implementadas:
-- Stack (Estrutura de pilha)
-- Queue (Estrutura de fila)
-- LinkedList (Estrutura de lista encadeada)
-- DoubleLinkedList (Estrutura de lista duplamente encadeada)
-- HashTable (Bom... é uma HashTable)
-
-## Em progresso:
-- BinaryTree (Estrutura de árvore binária)
+## Estruturas implementadas
+- Pilha (Stack)
+- Fila (Queue)
+- Lista Encadeada (LinkedList)
+- Lista Duplamente Encadeada (DoubleLinkedList)
+- Tabela Hash (HashTable)
+- Árvore Binária (BinaryTree)
+## Descrição
+Cada arquivo contém uma implementação completa de uma das estruturas acima, incluindo uma documentação detalhada das funcionalidades, e também testes unitários.
+## Objetivo
+O objetivo deste repositório é fornecer uma base sólida para o estudo e compreensão das estruturas de dados, bem como servir como referência para futuros projetos.
