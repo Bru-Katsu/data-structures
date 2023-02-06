@@ -30,7 +30,6 @@ namespace DataStructures.Collections
             Initialize(item);
         }
 
-
         /// <summary>
         /// Obtém ou define o item na posição especificada.
         /// </summary>
@@ -366,20 +365,39 @@ namespace DataStructures.Collections
     }
 
     #region Types
-    public class LinkedNode<Type>
+    /// <summary>
+    /// Classe LinkedNode que representa um nó de uma lista encadeada da classe <see cref="LinkedList{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">O tipo de valor armazenado pelo nó</typeparam>
+    public class LinkedNode<T>
     {
-        public LinkedNode(Type value)
+        /// <summary>
+        /// Construtor que cria um nó com o valor especificado.
+        /// </summary>
+        /// <param name="value">valor a ser armazenado pelo nó.</param>
+        public LinkedNode(T value)
         {
             Value = value;
         }
 
-        public Type Value { get; }
+        /// <summary>
+        /// Obtém o próximo nó na lista.
+        /// </summary>
+        public LinkedNode<T> Next { get; private set; }
 
-        public LinkedNode<Type> Next { get; private set; }
-        internal void SetNext(LinkedNode<Type> node)
+        /// <summary>
+        /// Define o próximo na lista.
+        /// </summary>
+        /// <param name="node">O nó a ser definido como próximo.</param>
+        public void SetNext(LinkedNode<T> node)
         {
             Next = node;
         }
+
+        /// <summary>
+        /// Obtém o valor armazenado
+        /// </summary>
+        public T Value { get; }
     }
     #endregion
 }

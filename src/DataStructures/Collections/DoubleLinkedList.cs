@@ -357,31 +357,64 @@ namespace DataStructures.Collections
         }
 
     }
-    public class DoubleLinkedNode<Type>
+
+    /// <summary>
+    /// Classe DoubleLinkedNode que representa um nó de uma lista encadeada duplamente ligada.
+    /// </summary>
+    /// <typeparam name="T">O tipo de valor armazenado pelo nó</typeparam>
+    public class DoubleLinkedNode<T>
     {
-        public DoubleLinkedNode(Type value)
+        /// <summary>
+        /// Construtor que cria um nó com o valor especificado.
+        /// </summary>
+        /// <param name="value">valor a ser armazenado pelo nó.</param>
+        public DoubleLinkedNode(T value)
         {
             Value = value;
         }
 
-        public DoubleLinkedNode(Type value, DoubleLinkedNode<Type> previous) : this(value)
+        /// <summary>
+        /// Construtor que cria um nó com o valor especificado.
+        /// </summary>
+        /// <param name="value">valor a ser armazenado pelo nó.</param>
+        /// <param name="previous">O nó a ser definido como anterior.</param>
+        public DoubleLinkedNode(T value, DoubleLinkedNode<T> previous) : this(value)
         {
             Previous = previous;
         }
 
-        public DoubleLinkedNode<Type>? Previous { get; private set; }
-        public void SetPrevious(DoubleLinkedNode<Type> node)
+        /// <summary>
+        /// Obtém o nó anterior na lista.
+        /// </summary>
+        public DoubleLinkedNode<T>? Previous { get; private set; }
+
+        /// <summary>
+        /// Define o nó anterior na lista.
+        /// </summary>
+        /// <param name="node">O nó a ser definido como anterior.</param>
+        public void SetPrevious(DoubleLinkedNode<T> node)
         {
             Previous = node;
         }
 
-        public DoubleLinkedNode<Type>? Next { get; private set; }
-        public void SetNext(DoubleLinkedNode<Type> node)
+        /// <summary>
+        /// Obtém o próximo nó na lista.
+        /// </summary>
+        public DoubleLinkedNode<T>? Next { get; private set; }
+
+        /// <summary>
+        /// Define o próximo na lista.
+        /// </summary>
+        /// <param name="node">O nó a ser definido como próximo.</param>
+        public void SetNext(DoubleLinkedNode<T> node)
         {
             Next = node;
         }
 
-        public Type Value { get; }
+        /// <summary>
+        /// Obtém o valor armazenado
+        /// </summary>
+        public T Value { get; }
     }
 
 }
