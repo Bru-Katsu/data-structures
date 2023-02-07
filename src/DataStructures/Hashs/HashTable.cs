@@ -7,13 +7,14 @@ namespace DataStructures.Hashs
     /// <summary>
     /// Representa uma implementação de HashTable
     /// </summary>
-    /// <typeparam name="T">Tipo do objeto a ser armazenado na HashTable</typeparam>
+    /// <typeparam name="TKey">Tipo do objeto usado para gerar a chave de hashing</typeparam>
+    /// <typeparam name="TValue">Tipo do objeto a ser armazenado na HashTable</typeparam>
     [ComVisible(true)]
     [DebuggerDisplay("Count = {Count}")]
-    public class HashTable<T> : IEnumerable<T>
+    public class HashTable<TKey, TValue> : IEnumerable<HashItem<TKey, TValue>>
     {
         private int _count = 0;
-        private readonly HashBucket<T>[] _table;
+        private readonly HashBucket<TKey, TValue>[] _table;
 
         /// <summary>
         /// Inicializa uma nova instância da classe HashTable
@@ -21,7 +22,7 @@ namespace DataStructures.Hashs
         /// <param name="size">Tamanho da HashTable</param>
         public HashTable(int size)
         {
-            _table = new HashBucket<T>[size];
+            _table = new HashBucket<TKey, TValue>[size];
         }
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace DataStructures.Hashs
         /// <param name="key">Chave de hashing</param>
         /// <returns>Item na HashTable</returns>
         /// <exception cref="ArgumentNullException">Exceção é lançada se a chave for nula ou em branco</exception>
-        public T this[string key]
+        public TValue this[TKey key]
         {
             get => Get(key);
             set => Add(key, value);
@@ -46,7 +47,7 @@ namespace DataStructures.Hashs
         /// </summary>
         /// <param name="key">Chave a ser usada para gerar hash</param>
         /// <returns>Hash gerado</returns>
-        private int GenerateHashCode(string key)
+        private int GenerateHashCode(TKey key)
         {
             return Math.Abs(key.GetHashCode()) % _table.Length;
         }
@@ -57,9 +58,9 @@ namespace DataStructures.Hashs
         /// <param name="key">Chave de hashing</param>
         /// <param name="item">Valor a ser armazenado</param>
         /// <exception cref="ArgumentNullException">Exceção é lançada se a chave for nula ou em branco</exception>
-        public void Add(string key, T item)
+        public void Add(TKey key, TValue item)
         {
-            if(string.IsNullOrEmpty(key))
+            if (key == null)
                 throw new ArgumentNullException(nameof(key), "Não é permitido chave nula ou em branco!");
 
             var hash = GenerateHashCode(key);
@@ -67,7 +68,7 @@ namespace DataStructures.Hashs
             var bucket = _table[hash];
             if (bucket == null)
             {
-                _table[hash] = new HashBucket<T>() { { key, item } };
+                _table[hash] = new HashBucket<TKey, TValue>() { { key, item } };
                 _count++;
                 return;
             }
@@ -85,9 +86,9 @@ namespace DataStructures.Hashs
         /// <param name="item">Valor armazenado</param>
         /// <returns>Booleano indicando se o valor foi encontrado ou não</returns>
         /// <exception cref="ArgumentNullException">Exceção é lançada se a chave for nula ou em branco</exception>
-        public bool TryGet(string key, out T item)
+        public bool TryGet(TKey key, out TValue item)
         {
-            if (string.IsNullOrEmpty(key))
+            if (key == null)
                 throw new ArgumentNullException(nameof(key), "Não é permitido chave nula ou em branco!");
 
             var hash = GenerateHashCode(key);
@@ -101,11 +102,11 @@ namespace DataStructures.Hashs
 
             foreach (var node in bucket)
             {
-                if (node.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase))
+                if (node.Key.Equals(key))
                 {
-                    item = node.Data;
+                    item = node.Item;
                     return true;
-                }                    
+                }
             }
 
             item = default;
@@ -117,9 +118,9 @@ namespace DataStructures.Hashs
         /// </summary>
         /// <param name="key">Chave de hashing</param>
         /// <exception cref="ArgumentNullException">Exceção é lançada se a chave for nula ou em branco</exception>
-        public void Remove(string key)
+        public void Remove(TKey key)
         {
-            if (string.IsNullOrEmpty(key))
+            if (key == null)
                 throw new ArgumentNullException(nameof(key), "Não é permitido chave nula ou em branco!");
 
             var hash = GenerateHashCode(key);
@@ -143,10 +144,10 @@ namespace DataStructures.Hashs
         /// <param name="key">Chave de hashing</param>
         /// <returns>Valor armazenado</returns>
         /// <exception cref="ArgumentNullException">Exceção é lançada se a chave for nula ou em branco</exception>
-        public T Get(string key)
+        public TValue Get(TKey key)
         {
-            if (string.IsNullOrEmpty(key))
-                throw new ArgumentNullException(nameof(key), "Não é permitido chave nula ou em branco!");
+            if (key == null)
+                throw new ArgumentNullException(nameof(key), "Não é permitido chave nula!");
 
             var hash = GenerateHashCode(key);
 
@@ -157,37 +158,37 @@ namespace DataStructures.Hashs
 
             foreach (var item in bucket)
             {
-                if (item.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase))
-                    return item.Data;
+                if (item.Key.Equals(key))
+                    return item.Item;
             }
 
             throw new InvalidOperationException("Não existe item para a chave informada!");
         }
 
         #region Enumerable
-        public IEnumerator<T> GetEnumerator()
+        public IEnumerator<HashItem<TKey, TValue>> GetEnumerator()
         {
-            return new HashTableEnumerator<T>(_table);
+            return new HashTableEnumerator<TKey, TValue>(_table);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return new HashTableEnumerator<T>(_table);
+            return new HashTableEnumerator<TKey, TValue>(_table);
         }
 
-        private class HashTableEnumerator<Type> : IEnumerator<Type>
+        private class HashTableEnumerator<TypeKey, TypeValue> : IEnumerator<HashItem<TypeKey, TypeValue>>
         {
             private int _index = -1;
-            private HashBucketNode<Type> _current = default;
-            private HashBucket<Type>? _bucket = default;
+            private HashBucketNode<TypeKey, TypeValue> _current = default;
+            private HashBucket<TypeKey, TypeValue>? _bucket = default;
 
-            private readonly HashBucket<Type>[] _table;
-            public HashTableEnumerator(HashBucket<Type>[] table)
+            private readonly HashBucket<TypeKey, TypeValue>[] _table;
+            public HashTableEnumerator(HashBucket<TypeKey, TypeValue>[] table)
             {
                 _table = table;
             }
 
-            public Type Current => _current.Data;
+            public HashItem<TypeKey, TypeValue> Current => new(_current.Key, _current.Item);
 
             object IEnumerator.Current => Current;
 
@@ -200,7 +201,7 @@ namespace DataStructures.Hashs
             {
                 if (_current == null && _index < _table.Length)
                 {
-                    while(_bucket == null && _index < _table.Length)
+                    while (_bucket == null && _index < _table.Length)
                     {
                         _index++;
                         _bucket = _table[_index];
@@ -221,16 +222,17 @@ namespace DataStructures.Hashs
     }
 
     /// <summary>
-    /// Representa um bucket da classe <see cref="HashTable{T}"/>.
+    /// Representa um bucket da classe <see cref="HashTable{TKey,TValue}"/>.
     /// </summary>
-    /// <typeparam name="T">O tipo de elementos na HashTable.</typeparam>
+    /// <typeparam name="TKey">Tipo do objeto usado para gerar a chave de hashing</typeparam>
+    /// <typeparam name="TValue">O tipo de elementos na HashTable.</typeparam>
     [ComVisible(true)]
     [DebuggerDisplay("Count = {Count}")]
-    internal class HashBucket<T> : IEnumerable<HashBucketNode<T>>
+    internal class HashBucket<TKey, TValue> : IEnumerable<HashBucketNode<TKey, TValue>>
     {
         private int _count;
-        private HashBucketNode<T> _head;
-        private HashBucketNode<T> _tail;
+        private HashBucketNode<TKey, TValue> _head;
+        private HashBucketNode<TKey, TValue> _tail;
 
         /// <summary>
         /// A propriedade retorna a quantidade de elementos armazenados na lista.
@@ -240,12 +242,12 @@ namespace DataStructures.Hashs
         /// <summary>
         /// A propriedade retorna o primeiro elemento da lista.
         /// </summary>
-        public HashBucketNode<T> Head => _head;
+        public HashBucketNode<TKey, TValue> Head => _head;
 
         /// <summary>
         /// A propriedade retorna o último elemento da lista.
         /// </summary>
-        public HashBucketNode<T> Tail => _tail;
+        public HashBucketNode<TKey, TValue> Tail => _tail;
 
         /// <summary>
         /// Construtor padrão da classe.
@@ -257,8 +259,8 @@ namespace DataStructures.Hashs
         /// </summary>
         /// <param name="key">A chave de hashing do elemento a ser armazenado.</param>
         /// <param name="value">O valor do elemento a ser armazenado.</param>
-        public HashBucket(string key, T value) 
-        { 
+        public HashBucket(TKey key, TValue value)
+        {
             Initialize(key, value);
         }
 
@@ -267,7 +269,7 @@ namespace DataStructures.Hashs
         /// </summary>
         /// <param name="key">A chave de hashing do elemento a ser adicionado.</param>
         /// <param name="value">O valor do elemento a ser adicionado.</param>
-        public void Add(string key, T value)
+        public void Add(TKey key, TValue value)
         {
             if (_head == null)
             {
@@ -275,7 +277,7 @@ namespace DataStructures.Hashs
                 return;
             }
 
-            _tail.Next = new HashBucketNode<T>(key, value);
+            _tail.Next = new HashBucketNode<TKey, TValue>(key, value);
             _count++;
         }
 
@@ -283,27 +285,27 @@ namespace DataStructures.Hashs
         /// Método que remove um elemento da lista a partir da chave informada.
         /// </summary>
         /// <param name="key">A chave de hashing do elemento a ser removido.</param>
-        public void Remove(string key)
+        public void Remove(TKey key)
         {
             if (_head.Next == null)
             {
-                if(_head.Key != key)
+                if (!_head.Key.Equals(key))
                     throw new ArgumentException("Não há itens para a chave informada!", nameof(key));
 
                 _head = null;
                 return;
             }
 
-            HashBucketNode<T> current = _head;
-            HashBucketNode<T> previous = default;
+            HashBucketNode<TKey, TValue> current = _head;
+            HashBucketNode<TKey, TValue> previous = default;
 
-            while (current.Key != key && current.Next != null)
+            while (!current.Key.Equals(key) && current.Next != null)
             {
                 previous = current;
                 current = current.Next;
             }
 
-            if (!current.Key.Equals(key, StringComparison.InvariantCultureIgnoreCase))
+            if (!current.Key.Equals(key))
                 throw new ArgumentException("Não há itens para a chave informada!", nameof(key));
 
             previous.Next = current.Next;
@@ -314,9 +316,9 @@ namespace DataStructures.Hashs
         /// </summary>
         /// <param name="key">A chave de hashing</param>
         /// <param name="item">O valor do nó</param>
-        private void Initialize(string key, T item)
+        private void Initialize(TKey key, TValue item)
         {
-            _head = new HashBucketNode<T>(key, item);
+            _head = new HashBucketNode<TKey, TValue>(key, item);
             _tail = _head;
             _count++;
         }
@@ -327,29 +329,29 @@ namespace DataStructures.Hashs
         /// <returns>O enumerador para os nós do bucket</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return new BucketEnumerator<T>(_head);
+            return new BucketEnumerator<TKey, TValue>(_head);
         }
 
         /// <summary>
         /// Obtém o enumerador para os nós do bucket
         /// </summary>
         /// <returns>O enumerador para os nós do bucket</returns>
-        public IEnumerator<HashBucketNode<T>> GetEnumerator()
+        public IEnumerator<HashBucketNode<TKey, TValue>> GetEnumerator()
         {
-            return new BucketEnumerator<T>(_head);
+            return new BucketEnumerator<TKey, TValue>(_head);
         }
 
-        private class BucketEnumerator<Type> : IEnumerator<HashBucketNode<Type>>
+        private class BucketEnumerator<TypeKey, Type> : IEnumerator<HashBucketNode<TypeKey, Type>>
         {
-            private readonly HashBucketNode<Type> _head;
-            private HashBucketNode<Type> _current;
+            private readonly HashBucketNode<TypeKey, Type> _head;
+            private HashBucketNode<TypeKey, Type> _current;
 
-            public BucketEnumerator(HashBucketNode<Type> head)
+            public BucketEnumerator(HashBucketNode<TypeKey, Type> head)
             {
                 _head = head;
             }
 
-            public HashBucketNode<Type> Current => _current;
+            public HashBucketNode<TypeKey, Type> Current => _current;
 
             object IEnumerator.Current => Current;
 
@@ -376,35 +378,65 @@ namespace DataStructures.Hashs
     }
 
     /// <summary>
-    /// Representa um nó de um bucket da classe <see cref="HashBucket{T}"/>.
+    /// Representa um nó de um bucket da classe <see cref="HashBucket{TKey,TValue}"/>.
     /// </summary>
-    /// <typeparam name="T">O tipo de elementos no HashBucket.</typeparam>
-    internal class HashBucketNode<T>
+    /// <typeparam name="TKey">Tipo do objeto usado para gerar a chave de hashing</typeparam>
+    /// <typeparam name="TValue">O tipo de elementos no HashBucket.</typeparam>
+    internal class HashBucketNode<TKey, TValue>
     {
         /// <summary>
         /// Construtor padrão que inicializa uma nova instância da classe <see cref="HashBucketNode{T}"/>.
         /// </summary>
         /// <param name="key">Chave de hashing.</param>
         /// <param name="item">Item armazenado.</param>
-        public HashBucketNode(string key, T item)
+        public HashBucketNode(TKey key, TValue item)
         {
             Key = key;
-            Data = item;
+            Item = item;
         }
 
         /// <summary>
         /// Obtém a chave.
         /// </summary>
-        public string Key { get; }
+        public TKey Key { get; }
 
         /// <summary>
         /// Obtém o item armazenado.
         /// </summary>
-        public T Data { get; }
+        public TValue Item { get; }
 
         /// <summary>
         /// Obtém ou define o próximo nó.
         /// </summary>
-        public HashBucketNode<T> Next { get; set; }
+        public HashBucketNode<TKey, TValue> Next { get; set; }
+    }
+
+    /// <summary>
+    /// Representa um item na HashTable da classe <see cref="HashTable{TKey,TValue}"/>.
+    /// </summary>
+    /// <typeparam name="TKey">Tipo do objeto usado para gerar a chave de hashing</typeparam>
+    /// <typeparam name="TValue">O tipo de elementos na HashTable.</typeparam>
+    public struct HashItem<TKey, TValue>
+    {
+        /// <summary>
+        /// Inicializa uma nova instância
+        /// </summary>
+        /// <param name="key">Chave de hashing</param>
+        /// <param name="value">Valor a ser armazenado</param>
+        public HashItem(TKey key, TValue value)
+        {
+            Key = key;
+            Value = value;
+        }
+
+        /// <summary>
+        /// Obtém o objeto usado como chave de hash.
+        /// </summary>
+        public TKey Key { get; }
+
+        /// <summary>
+        /// Obtém o valor armazenado para a chave.
+        /// </summary>
+        public TValue Value { get; }
     }
 }
