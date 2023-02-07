@@ -50,7 +50,11 @@ namespace DataStructures.Trees
             if(item == null)
                 throw new ArgumentNullException(nameof(item), "Não é permitido valores nulos!");
 
-            Insert(_root, item);
+            var inserted = Insert(_root, item);
+
+            if (_root == null)
+                _root = inserted;
+
             _count++;
         }
 
@@ -76,6 +80,9 @@ namespace DataStructures.Trees
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item), "Não é permitido valores nulos!");
+
+            if(_root == null)
+                throw new InvalidOperationException("Não existem itens na árvore!");
 
             Remove(_root, null, item);
             _count--;
