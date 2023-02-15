@@ -1,4 +1,5 @@
-﻿using DataStructures.Trees;
+﻿using DataStructures.Extensions;
+using DataStructures.Trees;
 using System;
 using Xunit;
 
@@ -125,6 +126,27 @@ namespace DataStructures.Tests
             // Assert
             Assert.False(tree.Contains(23));
             Assert.Equal(3, tree.Count);
+        }
+        #endregion
+
+        #region Extensions
+        [Fact(DisplayName = "Ao chamar a extensão, deve converter um IEnumerable para uma Queue com os mesmos itens")]
+        [Trait("BinaryTree", "ToBinaryTree")]
+        public void ToBinaryTree_DeveRetornarBinaryTreeComItens()
+        {
+            //arrange
+            var lista = new System.Collections.Generic.List<string> { "A", "B", "C", "D" };
+
+            //act
+            var tree = lista.ToBinaryTree();
+
+            //assert
+            Assert.Equal(lista.Count, tree.Count);
+
+            foreach (var item in lista)
+            {
+                Assert.True(tree.Contains(item));
+            }
         }
         #endregion
     }

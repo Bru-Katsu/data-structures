@@ -1,4 +1,5 @@
 ﻿using DataStructures.Collections;
+using DataStructures.Extensions;
 using System.Text.Json;
 using Xunit;
 
@@ -7,8 +8,7 @@ namespace DataStructures.Tests
     public class QueueTests
     {
         #region Peek
-        [Fact(DisplayName = "Ao espiar, deve retornar o primeiro elemento da fila")]
-        [Trait(nameof(Queue<int>), nameof(Queue<int>.Peek))]
+        [Fact(DisplayName = "Ao espiar, deve retornar o primeiro elemento da fila"), Trait("Queue", "Peek")]
         public void Peek_FilaComItens_DeveRetornarPrimeiroElementoDaFila()
         {
             //arrange
@@ -27,8 +27,7 @@ namespace DataStructures.Tests
         #endregion
 
         #region Enqueue
-        [Fact(DisplayName = "Ao enfileirar, o tamanho da fila deve ser incrementado")]
-        [Trait(nameof(Queue<int>), nameof(Queue<int>.Enqueue))]
+        [Fact(DisplayName = "Ao enfileirar, o tamanho da fila deve ser incrementado"), Trait("Queue", "Enqueue")]
         public void Enqueue_NovaFila_DeveIncrementarTamanho()
         {
             //arrange
@@ -43,8 +42,7 @@ namespace DataStructures.Tests
             Assert.Equal(3, fila.Count);
         }
 
-        [Fact(DisplayName = "Ao enfileirar, a fila não pode ser vazia")]
-        [Trait(nameof(Queue<int>), nameof(Queue<int>.Enqueue))]
+        [Fact(DisplayName = "Ao enfileirar, a fila não pode ser vazia"), Trait("Queue", "Enqueue")]
         public void Enqueue_NovaFila_NaoPodeSerVazia()
         {
             //arrange
@@ -59,8 +57,7 @@ namespace DataStructures.Tests
         #endregion
 
         #region Dequeue
-        [Fact(DisplayName = "Ao desenfileirar, deve retornar o primeiro elemento adicionado")]
-        [Trait(nameof(Queue<int>), nameof(Queue<int>.Dequeue))]
+        [Fact(DisplayName = "Ao desenfileirar, deve retornar o primeiro elemento adicionado"), Trait("Queue", "Dequeue")]
         public void Dequeue_FilaComItens_DeveRetornarPrimeiroElementoDaFila()
         {
             //arrange
@@ -81,8 +78,7 @@ namespace DataStructures.Tests
             Assert.Equal(valor1, segundoDesenfileirar);
         }
 
-        [Fact(DisplayName = "Ao desenfileirar todos os itens, a fila deve estar vazia")]
-        [Trait(nameof(Queue<int>), nameof(Queue<int>.Dequeue))]
+        [Fact(DisplayName = "Ao desenfileirar todos os itens, a fila deve estar vazia"), Trait("Queue", "Dequeue")]
         public void Dequeue_FilaComItens_DeveEstarVazia()
         {
             //arrange
@@ -104,8 +100,7 @@ namespace DataStructures.Tests
         #endregion
 
         #region Clear
-        [Fact(DisplayName = "Ao criar uma fila, o tamanho deve ser zero")]
-        [Trait(nameof(Queue<int>), nameof(Queue<int>.Clear))]
+        [Fact(DisplayName = "Ao criar uma fila, o tamanho deve ser zero"), Trait("Queue", "Clear")]
         public void Clear_FilaComItens_AoLimparQuantidadeDeRegistrosDeveSerZerado()
         {
             //arrange
@@ -124,8 +119,7 @@ namespace DataStructures.Tests
         #endregion
 
         #region New Instance
-        [Fact(DisplayName = "Ao criar uma fila, o tamanho deve ser zero")]
-        [Trait(nameof(Queue<int>), "Instânciar")]
+        [Fact(DisplayName = "Ao criar uma fila, o tamanho deve ser zero"), Trait("Queue", "Instânciar")]
         public void Instanciar_FilaSemItens_TamanhoDeveSerZero()
         {
             //arrange & act
@@ -137,8 +131,7 @@ namespace DataStructures.Tests
         #endregion
 
         #region Serialize
-        [Fact(DisplayName = "Ao seriaizar, deve conter itens em ordem do último para o primeiro")]
-        [Trait(nameof(Queue<int>), "Serialize")]
+        [Fact(DisplayName = "Ao seriaizar, deve conter itens em ordem do último para o primeiro"), Trait("Queue", "Serialize")]
         public void Serialize_PilhaSemItens_TamanhoDeveSerZero()
         {
             //arrange
@@ -153,8 +146,7 @@ namespace DataStructures.Tests
             Assert.Equal("[0,10,20]", json);
         }
 
-        [Fact(DisplayName = "Ao deseriaizar, deve conter itens em ordem do último para o primeiro")]
-        [Trait(nameof(Queue<int>), "Deserialize")]
+        [Fact(DisplayName = "Ao deseriaizar, deve conter itens em ordem do último para o primeiro"), Trait("Queue", "Deserialize")]
         public void Deserialize_PilhaSemItens_TamanhoDeveSerZero()
         {
             //arrange
@@ -172,6 +164,27 @@ namespace DataStructures.Tests
             Assert.Equal(0, deserialized.Dequeue());
             Assert.Equal(10, deserialized.Dequeue());
             Assert.Equal(20, deserialized.Dequeue());
+        }
+        #endregion
+
+        #region Extensions
+        [Fact(DisplayName = "Ao chamar a extensão, deve converter um IEnumerable para uma Queue com os mesmos itens")]
+        [Trait("Queue", "ToQueue")]
+        public void ToQueue_DeveRetornarQueueComItens()
+        {
+            //arrange
+            var lista = new System.Collections.Generic.List<string> { "A", "B", "C", "D" };
+
+            //act
+            var queue = lista.ToQueue();
+
+            //assert
+            Assert.Equal(lista.Count, queue.Count);
+
+            foreach (var item in lista)
+            {
+                Assert.Equal(item, queue.Dequeue());
+            }
         }
         #endregion
     }

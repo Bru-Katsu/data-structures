@@ -1,5 +1,7 @@
-﻿using DataStructures.Hashs;
+﻿using DataStructures.Extensions;
+using DataStructures.Hashs;
 using System;
+using System.Runtime.CompilerServices;
 using Xunit;
 
 namespace DataStructures.Tests
@@ -8,7 +10,7 @@ namespace DataStructures.Tests
     {
         #region Add
         [Fact(DisplayName = "Ao adicionar, deve conter o item na hashtable")]
-        [Trait(nameof(HashTable<string, int>), nameof(HashTable<string, int>.Add))]
+        [Trait("HashTable", "Add")]
         public void Adicionar_HashTableSemItens_DeveConterItem()
         {
             //arrange
@@ -27,7 +29,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao adicionar no mesmo endereçamento, deve conter o item na hashtable, de forma encadeada no bucket")]
-        [Trait(nameof(HashTable<string, int>), nameof(HashTable<string, int>.Add))]
+        [Trait("HashTable", "Add")]
         public void Adicionar_HashTableComMesmoEnderecamento_DeveAgruparEncadeadoNoBucket()
         {
             //arrange
@@ -47,7 +49,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao adicionar no mesmo endereçamento, deve incrementar quantidade")]
-        [Trait(nameof(HashTable<string, int>), nameof(HashTable<string, int>.Add))]
+        [Trait("HashTable", "Add")]
         public void Adicionar_HashTableComRegistrosNoMesmoBucket_DeveIncrementarQuantidade()
         {
             //arrange
@@ -66,7 +68,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao adicionar, deve incrementar quantidade")]
-        [Trait(nameof(HashTable<string, int>), nameof(HashTable<string, int>.Add))]
+        [Trait("HashTable", "Add")]
         public void Adicionar_HashTableComRegistrosDispersos_DeveIncrementarQuantidade()
         {
             //arrange
@@ -87,7 +89,7 @@ namespace DataStructures.Tests
 
         #region Remove
         [Fact(DisplayName = "Ao remover no mesmo endereçamento, deve remover o item encadeado no bucket")]
-        [Trait(nameof(HashTable<string, int>), nameof(HashTable<string, int>.Remove))]
+        [Trait("HashTable", "Remove")]
         public void Remover_HashTableComMesmoEnderecamento_DeveRemoverEncadeadoNoBucket()
         {
             //arrange
@@ -108,7 +110,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao remover registro, deve decrementar a quantidade")]
-        [Trait(nameof(HashTable<string, int>), nameof(HashTable<string, int>.Remove))]
+        [Trait("HashTable", "Remove")]
         public void Remover_HashTableComRegistrosNoMesmoBucket_DeveDecrementarQuantidade()
         {
             //arrange
@@ -127,7 +129,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao remover registro, deve decrementar a quantidade")]
-        [Trait(nameof(HashTable<string, int>), nameof(HashTable<string, int>.Remove))]
+        [Trait("HashTable", "Remove")]
         public void Remover_HashTableComRegistrosDispersos_DeveDecrementarQuantidade()
         {
             //arrange
@@ -146,20 +148,20 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao remover no mesmo endereçamento, deve remover o item encadeado no bucket")]
-        [Trait(nameof(HashTable<string, int>), nameof(HashTable<string, int>.Remove))]
+        [Trait("HashTable", "Remove")]
         public void Remover_HashTableSemItemComRespectivaChave_DeveRetornarException()
         {
             //arrange
             var hashTable = new HashTable<string, int>(1) { ["mês"] = 12 };
 
             //act & assert
-            Assert.Throws<ArgumentException>(() => hashTable.Remove("ano"));            
+            Assert.Throws<ArgumentException>(() => hashTable.Remove("ano"));
         }
         #endregion
 
         #region Get
         [Fact(DisplayName = "Ao tentar acessar um registro com a hashtable sem itens, deve estourar exception")]
-        [Trait(nameof(HashTable<string, int>), nameof(HashTable<string, int>.Get))]
+        [Trait("HashTable", "Get")]
         public void Get_HashTableSemItens_DeveRetornarException()
         {
             //arrange
@@ -170,7 +172,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao tentar acessar um registro com a hashtable sem itens, deve estourar exception")]
-        [Trait(nameof(HashTable<string, int>), nameof(HashTable<string, int>.Get))]
+        [Trait("HashTable", "Get")]
         public void Get_HashTableSemChaveEspecifica_DeveRetornarException()
         {
             //arrange
@@ -181,7 +183,7 @@ namespace DataStructures.Tests
         }
 
         [Fact(DisplayName = "Ao tentar acessar um registro com a hashtable sem itens, deve estourar exception")]
-        [Trait(nameof(HashTable<string, int>), nameof(HashTable<string, int>.Get))]
+        [Trait("HashTable", "Get")]
         public void Get_HashTableComItens_DeveRetornarItem()
         {
             //arrange
@@ -189,9 +191,73 @@ namespace DataStructures.Tests
 
             //act
             var valor = hashTable.Get("item");
-            
+
             //assert
             Assert.Equal(50, valor);
+        }
+        #endregion
+
+        #region Extensions
+        [Fact(DisplayName = "Ao chamar a extensão, deve converter um IEnumerable para uma Queue com os mesmos itens")]
+        [Trait("HashTable", "ToHashTable")]
+        public void ToHashTable_SomenteSeletorChave_DeveRetornarHashTableComItens()
+        {
+            //arrange
+            //any non-sense data, just to make it works
+            var lista = new System.Collections.Generic.List<ItemTest<int>> { 
+                new ItemTest<int>("Brazil", 20), 
+                new ItemTest<int>("Canada", 15), 
+                new ItemTest<int>("Korea", 2), 
+                new ItemTest<int>("China", 5) 
+            };
+
+            //act
+            var hashTable = lista.ToHashTable((item) => item.Key);
+
+            //assert
+            Assert.Equal(lista.Count, hashTable.Count);
+
+            foreach (var item in lista)
+            {
+                Assert.Equal(item.Value, hashTable.Get(item.Key).Value);
+            }
+        }
+
+        [Fact(DisplayName = "Ao chamar a extensão, deve converter um IEnumerable para uma Queue com os mesmos itens")]
+        [Trait("HashTable", "ToHashTable")]
+        public void ToHashTable_SeletorChaveValor_DeveRetornarHashTableComItens()
+        {
+            //arrange
+            //any non-sense data, just to make it works
+            var lista = new System.Collections.Generic.List<ItemTest<int>> {
+                new ItemTest<int>("Brazil", 20),
+                new ItemTest<int>("Canada", 15),
+                new ItemTest<int>("Korea", 2),
+                new ItemTest<int>("China", 5)
+            };
+
+            //act
+            var hashTable = lista.ToHashTable((k) => k.Key, (v) => v.Value);
+
+            //assert
+            Assert.Equal(lista.Count, hashTable.Count);
+
+            foreach (var item in lista)
+            {
+                Assert.Equal(item.Value, hashTable.Get(item.Key));
+            }
+        }
+
+        private class ItemTest<T>
+        {
+            public ItemTest(string key, T value)
+            {
+                Key = key;
+                Value = value;
+            }
+
+            public string Key { get; set; }
+            public T Value { get; set; }
         }
         #endregion
     }
