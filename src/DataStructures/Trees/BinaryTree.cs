@@ -317,6 +317,7 @@ namespace DataStructures.Trees
     /// Representa um nó de uma árvore binária da classe <see cref="BinaryTree{T}"/>.
     /// </summary>
     /// <typeparam name="T">O tipo de elementos na árvore binária. Deve implementar <see cref="IComparable{T}"/> para permitir comparação entre elementos.</typeparam>
+    [ComVisible(true)]
     public class BinaryTreeNode<T> where T : IComparable<T>
     {
         /// <summary>

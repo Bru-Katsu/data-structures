@@ -421,6 +421,7 @@ namespace DataStructures.Collections
     /// Classe DoubleLinkedNode que representa um nó de uma lista duplamente encadeada da classe <see cref="DoubleLinkedList{T}"/>.
     /// </summary>
     /// <typeparam name="T">O tipo de valor armazenado pelo nó</typeparam>
+    [ComVisible(true)]
     public class DoubleLinkedNode<T>
     {
         /// <summary>
@@ -475,5 +476,4 @@ namespace DataStructures.Collections
         /// </summary>
         public T Value { get; }
     }
-
 }

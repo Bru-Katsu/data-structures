@@ -429,6 +429,7 @@ namespace DataStructures.Collections
     /// Classe LinkedNode que representa um nó de uma lista encadeada da classe <see cref="LinkedList{T}"/>.
     /// </summary>
     /// <typeparam name="T">O tipo de valor armazenado pelo nó</typeparam>
+    [ComVisible(true)]
     public class LinkedNode<T>
     {
         /// <summary>
