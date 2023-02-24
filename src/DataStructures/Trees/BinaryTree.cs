@@ -36,6 +36,11 @@ namespace DataStructures.Trees
         public int Count => _count;
 
         /// <summary>
+        /// Obtém a altura da árvore binária.
+        /// </summary>
+        public int Height => GetHeight(_root);
+
+        /// <summary>
         /// Obtém a raiz da árvore binária
         /// </summary>
         public BinaryTreeNode<T> Root => _root;
@@ -47,7 +52,7 @@ namespace DataStructures.Trees
         /// <exception cref="ArgumentNullException">Se o item estiver nulo.</exception>
         public void Add(T item)
         {
-            if(item == null)
+            if (item == null)
                 throw new ArgumentNullException(nameof(item), "Não é permitido valores nulos!");
 
             var inserted = Insert(_root, item);
@@ -76,15 +81,19 @@ namespace DataStructures.Trees
         /// </summary>
         /// <param name="item">O item a ser removido da árvore binária.</param>
         /// <exception cref="ArgumentNullException">Se o item estiver nulo.</exception>
+        /// <exception cref="InvalidOperationException">Se a árvore não conter itens.</exception>
         public void Remove(T item)
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item), "Não é permitido valores nulos!");
 
-            if(_root == null)
+            if (_root == null)
                 throw new InvalidOperationException("Não existem itens na árvore!");
 
-            Remove(_root, null, item);
+            var removed = Remove(_root, null, item);
+            if (!removed)
+                throw new InvalidOperationException("Não existe o valor informado na árvore!");
+
             _count--;
         }
 
@@ -98,15 +107,15 @@ namespace DataStructures.Trees
         }
 
         #region Recursive Methods
-        private void Remove(BinaryTreeNode<T> node, BinaryTreeNode<T> previous, T item)
+        private bool Remove(BinaryTreeNode<T> node, BinaryTreeNode<T> previous, T item)
         {
             if (node == null)
-                return;
+                return false;
 
             if (item.CompareTo(node.Item) == 0)
             {
                 //se não tiver filhos
-                if(node.Right == null && node.Left == null)
+                if (node.Right == null && node.Left == null)
                 {
                     if (previous.Left.Equals(node))
                         previous.SetLeft(null);
@@ -115,7 +124,7 @@ namespace DataStructures.Trees
                 }
 
                 //se tiver filho a direita
-                if(node.Left == null && node.Right != null)
+                if (node.Left == null && node.Right != null)
                 {
                     if (previous.Right.Equals(node))
                         previous.Right.SetRight(node.Right);
@@ -133,7 +142,7 @@ namespace DataStructures.Trees
                 }
 
                 //se tiver dois filhos
-                if(previous.Left != null && node.Right != null)
+                if (previous.Left != null && node.Right != null)
                 {
                     var minimum = GetMinimumValue(node);
                     Remove(node, null, minimum);
@@ -145,12 +154,14 @@ namespace DataStructures.Trees
                     else
                         previous.SetLeft(newNode);
                 }
+
+                return true;
             }
 
             if (item.CompareTo(node.Item) < 0)
-                Remove(node.Left, node, item);
+                return Remove(node.Left, node, item);
             else
-                Remove(node.Right, node, item);
+                return Remove(node.Right, node, item);
         }
 
         private T GetMinimumValue(BinaryTreeNode<T> node)
@@ -166,10 +177,10 @@ namespace DataStructures.Trees
             if (node == null)
                 return default;
 
-            if(item.CompareTo(node.Item) == 0)
+            if (item.CompareTo(node.Item) == 0)
                 return node;
 
-            if(item.CompareTo(node.Item) < 0)
+            if (item.CompareTo(node.Item) < 0)
                 return Search(node.Left, item);
             else
                 return Search(node.Right, item);
@@ -177,7 +188,7 @@ namespace DataStructures.Trees
 
         private BinaryTreeNode<T> Insert(BinaryTreeNode<T> node, T item)
         {
-            if(node == null)
+            if (node == null)
             {
                 node = new BinaryTreeNode<T>(item);
                 return node;
@@ -193,6 +204,19 @@ namespace DataStructures.Trees
             }
 
             return node;
+        }
+
+        private int GetHeight(BinaryTreeNode<T> node)
+        {
+            int max = 0;
+            if (node == null)
+                return 0;
+
+            int left = GetHeight(node.Left);
+            int right = GetHeight(node.Right);
+
+            max = left > right ? left : right;
+            return max + 1;
         }
         #endregion
 

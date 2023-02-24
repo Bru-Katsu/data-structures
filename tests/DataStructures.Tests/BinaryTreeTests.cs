@@ -113,7 +113,29 @@ namespace DataStructures.Tests
             Assert.Throws<ArgumentNullException>(() => tree.Remove(null));
         }
 
-        [Fact(DisplayName = "Não deve permitir conter item após remoção")]
+        [Fact(DisplayName = "Não deve permitir remover valores quando não conter itens")]
+        [Trait("BinaryTree", "Remove")]
+        public void Remove_BinaryTree_NaoDevePermitirValoresQuandoNaoHouverItens()
+        {
+            // Arrange
+            var tree = new BinaryTree<string>();
+
+            // Act & Assert
+            Assert.Throws<InvalidOperationException>(() => tree.Remove("item"));
+        }
+
+        [Fact(DisplayName = "Ao tentar remover valor inexistente, deve retornar exception")]
+        [Trait("BinaryTree", "Remove")]
+        public void Remove_BinaryTree_AoRemoverValorInexistenteDeveRetornarException()
+        {
+            // Arrange
+            var tree = new BinaryTree<string>() { "Japão", "Brasil" };
+
+            // Act & Assert
+            Assert.Throws<InvalidOperationException>(() => tree.Remove("Argentina"));
+        }
+
+        [Fact(DisplayName = "Não deve conter item após remoção")]
         [Trait("BinaryTree", "Remove")]
         public void Remove_BinaryTree_NaoDeveConterItemAposRemocao()
         {
@@ -126,6 +148,37 @@ namespace DataStructures.Tests
             // Assert
             Assert.False(tree.Contains(23));
             Assert.Equal(3, tree.Count);
+        }
+        #endregion
+
+        #region Height
+
+        [Fact(DisplayName = "Ao conter itens, deve retornar a altura da árvore binária de acordo com o números de iterações máximas necessárias para percorre-lá em uma busca")]
+        [Trait("BinaryTree", "Height")]
+        public void Add_BinaryTree_AlturaDeveEstarCorreta()
+        {
+            // Arrange
+            var tree = new BinaryTree<int>();
+            tree.Add(6);
+            tree.Add(10);
+            tree.Add(15);
+            tree.Add(18);
+            tree.Add(5);
+            tree.Add(3);
+
+            // Act & Assert
+            Assert.Equal(4, tree.Height);
+        }
+
+        [Fact(DisplayName = "Ao não conter itens, deve retornar zero")]
+        [Trait("BinaryTree", "Height")]
+        public void Add_BinaryTree_NaoConterItensDeveTerAlturaZerada()
+        {
+            // Arrange
+            var tree = new BinaryTree<int>();
+
+            // Act & Assert
+            Assert.Equal(0, tree.Height);
         }
         #endregion
 
