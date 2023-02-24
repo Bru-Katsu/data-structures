@@ -10,7 +10,7 @@ namespace DataStructures.Trees
     /// <typeparam name="T">O tipo de elementos na árvore binária. Deve implementar <see cref="IComparable{T}"/> para permitir comparação entre elementos.</typeparam>
     [ComVisible(true)]
     [DebuggerDisplay("Count = {Count}")]
-    public class BinaryTree<T> : IEnumerable<T> where T : IComparable<T>
+    public class BinaryTree<T> : ICollection<T> where T : IComparable<T>
     {
         private BinaryTreeNode<T> _root;
         private int _count;
@@ -39,6 +39,11 @@ namespace DataStructures.Trees
         /// Obtém a altura da árvore binária.
         /// </summary>
         public int Height => GetHeight(_root);
+
+        /// <summary>
+        /// Obtém um valor que indica se a árvore binária é somente leitura.
+        /// </summary>
+        public bool IsReadOnly => false;
 
         /// <summary>
         /// Obtém a raiz da árvore binária
@@ -82,7 +87,7 @@ namespace DataStructures.Trees
         /// <param name="item">O item a ser removido da árvore binária.</param>
         /// <exception cref="ArgumentNullException">Se o item estiver nulo.</exception>
         /// <exception cref="InvalidOperationException">Se a árvore não conter itens.</exception>
-        public void Remove(T item)
+        public bool Remove(T item)
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item), "Não é permitido valores nulos!");
@@ -91,19 +96,45 @@ namespace DataStructures.Trees
                 throw new InvalidOperationException("Não existem itens na árvore!");
 
             var removed = Remove(_root, null, item);
-            if (!removed)
-                throw new InvalidOperationException("Não existe o valor informado na árvore!");
+            if (removed)
+                _count--;
 
-            _count--;
+            return removed;
         }
 
         /// <summary>
-        /// Método que remove todos os elementos da árvore binária.
+        /// Remove todos os elementos da árvore binária.
         /// </summary>
         public void Clear()
         {
             _root = null;
             _count = 0;
+        }
+
+        /// <summary>
+        /// Copia os itens da árvore para um array.
+        /// </summary>
+        /// <param name="array">Array onde será copiado</param>
+        /// <param name="arrayIndex">Índice de início da cópia</param>
+        /// <exception cref="ArgumentNullException">Quando o array for nulo.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Quando estiver fora do invervalo do array.</exception>
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            if (array == null)
+                throw new ArgumentNullException(nameof(array), "Não é permitido array nulo!");
+
+            if (arrayIndex < 0 || arrayIndex > array.Length)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex), "Valor fora do intervalo do array!");
+
+            if (array.Length - arrayIndex < Count)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex), "Valor fora do intervalo do array!");
+
+            int count = arrayIndex;
+            foreach (var item in this)
+            {
+                array[count] = item;
+                count++;
+            }
         }
 
         #region Recursive Methods
@@ -226,7 +257,7 @@ namespace DataStructures.Trees
         /// </summary>
         public IEnumerator<T> GetEnumerator()
         {
-            return new BinaryTreeEnumerator<T>(Root);
+            return new BinaryTreeEnumerator<T>(_root);
         }
 
         /// <summary>
@@ -234,7 +265,7 @@ namespace DataStructures.Trees
         /// </summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return new BinaryTreeEnumerator<T>(Root);
+            return new BinaryTreeEnumerator<T>(_root);
         }
 
         private class BinaryTreeEnumerator<Type> : IEnumerator<Type> where Type : IComparable<Type>
@@ -271,6 +302,9 @@ namespace DataStructures.Trees
 
             private void TraverseOrdinal(BinaryTreeNode<Type> node)
             {
+                if (node == null)
+                    return;
+
                 TraverseOrdinal(node.Left);
                 _items.Add(node.Item);
                 TraverseOrdinal(node.Right);

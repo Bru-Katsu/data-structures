@@ -1,6 +1,7 @@
 ﻿using DataStructures.Extensions;
 using DataStructures.Trees;
 using System;
+using System.Linq;
 using Xunit;
 
 namespace DataStructures.Tests
@@ -124,15 +125,15 @@ namespace DataStructures.Tests
             Assert.Throws<InvalidOperationException>(() => tree.Remove("item"));
         }
 
-        [Fact(DisplayName = "Ao tentar remover valor inexistente, deve retornar exception")]
+        [Fact(DisplayName = "Ao tentar remover valor inexistente, deve retornar false")]
         [Trait("BinaryTree", "Remove")]
-        public void Remove_BinaryTree_AoRemoverValorInexistenteDeveRetornarException()
+        public void Remove_BinaryTree_AoRemoverValorInexistenteDeveRetornarFalse()
         {
             // Arrange
             var tree = new BinaryTree<string>() { "Japão", "Brasil" };
 
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => tree.Remove("Argentina"));
+            Assert.False(tree.Remove("Argentina"));
         }
 
         [Fact(DisplayName = "Não deve conter item após remoção")]
@@ -151,11 +152,27 @@ namespace DataStructures.Tests
         }
         #endregion
 
-        #region Height
+        #region Clear
+        [Fact(DisplayName = "Não deve conter item após a chamada do método Clear")]
+        [Trait("BinaryTree", "Clear")]
+        public void Clear_BinaryTree_NaoDeveConterItemAposClear()
+        {
+            // Arrange
+            var tree = new BinaryTree<int>() { 5, 20, 90, 23 };
 
+            // Act
+            tree.Clear();
+
+            // Assert            
+            Assert.Equal(0, tree.Count);
+            Assert.Equal(0, tree.Height);
+        }
+        #endregion
+
+        #region Height
         [Fact(DisplayName = "Ao conter itens, deve retornar a altura da árvore binária de acordo com o números de iterações máximas necessárias para percorre-lá em uma busca")]
         [Trait("BinaryTree", "Height")]
-        public void Add_BinaryTree_AlturaDeveEstarCorreta()
+        public void Height_BinaryTree_AlturaDeveEstarCorreta()
         {
             // Arrange
             var tree = new BinaryTree<int>();
@@ -172,13 +189,80 @@ namespace DataStructures.Tests
 
         [Fact(DisplayName = "Ao não conter itens, deve retornar zero")]
         [Trait("BinaryTree", "Height")]
-        public void Add_BinaryTree_NaoConterItensDeveTerAlturaZerada()
+        public void Height_BinaryTree_NaoConterItensDeveTerAlturaZerada()
         {
             // Arrange
             var tree = new BinaryTree<int>();
 
             // Act & Assert
             Assert.Equal(0, tree.Height);
+        }
+        #endregion
+
+        #region CopyTo
+        [Fact(DisplayName = "Ao copiar os itens para um array, deve conter todos os itens da árvore binária")]
+        [Trait("BinaryTree", "CopyTo")]
+        public void CopyTo_BinaryTree_DeveConterTodosItensNoArray()
+        {
+            // Arrange
+            var tree = new BinaryTree<int>()
+            {
+                5, 10, 50, 19, 2, 3, 7, 42
+            };
+
+            // Act
+            var arr = new int[tree.Count];
+            tree.CopyTo(arr, 0);
+
+            // Assert
+            Assert.Contains(tree, (item) =>
+            {
+                return arr.Contains(item);
+            });
+        }
+
+        [Fact(DisplayName = "Ao tentar copiar os itens para um array nulo, deve retornar exception")]
+        [Trait("BinaryTree", "CopyTo")]
+        public void CopyTo_BinaryTree_ArrayNuloDeveRetornarException()
+        {
+            // Arrange
+            var tree = new BinaryTree<int>()
+            {
+                5, 10, 50, 19, 2, 3, 7, 42
+            };
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => tree.CopyTo(null, 0));
+        }
+
+        [Fact(DisplayName = "Ao tentar copiar os itens para fora do intervalo do array, deve retornar exception")]
+        [Trait("BinaryTree", "CopyTo")]
+        public void CopyTo_BinaryTree_ArrayIndexForaDoIntervaloDeveRetornarException()
+        {
+            // Arrange
+            var tree = new BinaryTree<int>()
+            {
+                5, 10, 50, 19, 2, 3, 7, 42
+            };
+
+            // Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => tree.CopyTo(new int[tree.Count], tree.Count + 1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => tree.CopyTo(new int[tree.Count], -1));
+        }
+
+        [Fact(DisplayName = "Caso array não comporte todo o conteúdo da BinaryTree, deve retornar exception")]
+        [Trait("BinaryTree", "CopyTo")]
+        public void CopyTo_BinaryTree_ArrayMenorQueBinaryTreeDeveRetornarException()
+        {
+            // Arrange
+            var tree = new BinaryTree<int>()
+            {
+                5, 10, 50, 19, 2, 3, 7, 42
+            };
+
+            // Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => tree.CopyTo(new int[tree.Count], tree.Count - 1));
+            
         }
         #endregion
 
