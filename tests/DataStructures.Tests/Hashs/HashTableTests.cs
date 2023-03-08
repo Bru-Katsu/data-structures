@@ -4,7 +4,7 @@ using System;
 using System.Runtime.CompilerServices;
 using Xunit;
 
-namespace DataStructures.Tests
+namespace DataStructures.Tests.Hashs
 {
     public class HashTableTests
     {
@@ -204,11 +204,11 @@ namespace DataStructures.Tests
         {
             //arrange
             //any non-sense data, just to make it works
-            var lista = new System.Collections.Generic.List<ItemTest<int>> { 
-                new ItemTest<int>("Brazil", 20), 
-                new ItemTest<int>("Canada", 15), 
-                new ItemTest<int>("Korea", 2), 
-                new ItemTest<int>("China", 5) 
+            var lista = new System.Collections.Generic.List<ItemTest<int>> {
+                new ItemTest<int>("Brazil", 20),
+                new ItemTest<int>("Canada", 15),
+                new ItemTest<int>("Korea", 2),
+                new ItemTest<int>("China", 5)
             };
 
             //act

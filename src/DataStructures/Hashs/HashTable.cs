@@ -17,12 +17,17 @@ namespace DataStructures.Hashs
         private readonly HashBucket<TKey, TValue>[] _table;
 
         /// <summary>
-        /// Inicializa uma nova instância da classe HashTable.
+        /// Inicializa uma nova instância da classe <see cref="HashTable{TKey, TValue}"/>.
         /// </summary>
-        /// <param name="size">Tamanho da HashTable.</param>
-        public HashTable(int size)
+        public HashTable() : this(10) { }
+
+        /// <summary>
+        /// Inicializa uma nova instância da classe <see cref="HashTable{TKey, TValue}"/>.
+        /// </summary>
+        /// <param name="capacity">Tamanho da HashTable.</param>
+        public HashTable(int capacity)
         {
-            _table = new HashBucket<TKey, TValue>[size];
+            _table = new HashBucket<TKey, TValue>[capacity];
         }
 
         /// <summary>
@@ -379,14 +384,14 @@ namespace DataStructures.Hashs
     }
 
     /// <summary>
-    /// Representa um nó de um bucket da classe <see cref="HashBucket{TKey,TValue}"/>.
+    /// Representa um nó de um bucket da classe <see cref="HashBucket{TKey, TValue}"/>.
     /// </summary>
     /// <typeparam name="TKey">Tipo do objeto usado para gerar a chave de hashing.</typeparam>
     /// <typeparam name="TValue">O tipo de elementos no HashBucket.</typeparam>
     internal class HashBucketNode<TKey, TValue>
     {
         /// <summary>
-        /// Construtor padrão que inicializa uma nova instância da classe <see cref="HashBucketNode{T}"/>.
+        /// Construtor padrão que inicializa uma nova instância da classe <see cref="HashBucketNode{TKey, TValue}"/>.
         /// </summary>
         /// <param name="key">Chave de hashing.</param>
         /// <param name="item">Item armazenado.</param>

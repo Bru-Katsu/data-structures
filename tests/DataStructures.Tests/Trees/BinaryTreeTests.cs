@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace DataStructures.Tests
+namespace DataStructures.Tests.Trees
 {
     public class BinaryTreeTests
     {
@@ -262,7 +262,7 @@ namespace DataStructures.Tests
 
             // Act & Assert
             Assert.Throws<ArgumentOutOfRangeException>(() => tree.CopyTo(new int[tree.Count], tree.Count - 1));
-            
+
         }
         #endregion
 

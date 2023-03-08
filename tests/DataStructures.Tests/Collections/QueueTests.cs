@@ -3,7 +3,7 @@ using DataStructures.Extensions;
 using System.Text.Json;
 using Xunit;
 
-namespace DataStructures.Tests
+namespace DataStructures.Tests.Collections
 {
     public class QueueTests
     {
@@ -95,7 +95,7 @@ namespace DataStructures.Tests
             fila.Dequeue();
 
             //assert
-            Assert.True(fila.IsEmpty);            
+            Assert.True(fila.IsEmpty);
         }
         #endregion
 

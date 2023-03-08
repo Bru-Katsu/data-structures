@@ -4,7 +4,7 @@ using System;
 using System.Text.Json;
 using Xunit;
 
-namespace DataStructures.Tests
+namespace DataStructures.Tests.Collections
 {
     public class StackTests
     {
@@ -120,7 +120,7 @@ namespace DataStructures.Tests
 
             //act
             var deserialized = JsonSerializer.Deserialize<Stack<int>>(json);
-            
+
             //assert
             Assert.Equal(20, deserialized.Pop());
             Assert.Equal(10, deserialized.Pop());
@@ -142,7 +142,7 @@ namespace DataStructures.Tests
             //assert
             Assert.Equal(lista.Count, stack.Count);
 
-            for (int i = lista.Count - 1 ; i >= 0; i--)
+            for (int i = lista.Count - 1; i >= 0; i--)
             {
                 Assert.Equal(lista[i], stack.Pop());
             }

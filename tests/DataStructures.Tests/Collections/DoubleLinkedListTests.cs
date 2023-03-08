@@ -1,12 +1,11 @@
-﻿
-using DataStructures.Collections;
+﻿using DataStructures.Collections;
 using DataStructures.Extensions;
 using System;
 using System.Linq;
 using System.Text.Json;
 using Xunit;
 
-namespace DataStructures.Tests
+namespace DataStructures.Tests.Collections
 {
     public class DoubleDoubleLinkedListTests
     {

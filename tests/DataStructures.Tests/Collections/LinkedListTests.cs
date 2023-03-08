@@ -1,12 +1,11 @@
-﻿
-using DataStructures.Collections;
+﻿using DataStructures.Collections;
 using DataStructures.Extensions;
 using System;
 using System.Linq;
 using System.Text.Json;
 using Xunit;
 
-namespace DataStructures.Tests
+namespace DataStructures.Tests.Collections
 {
     public class LinkedListTests
     {
@@ -162,7 +161,7 @@ namespace DataStructures.Tests
             var list = new LinkedList<int>() { 16, 1, 15 };
 
             //act 
-            list.RemoveAt(1);            
+            list.RemoveAt(1);
 
             //assert
             Assert.Equal(2, list.Count);

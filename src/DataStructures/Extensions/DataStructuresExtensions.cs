@@ -67,6 +67,21 @@
         }
 
         /// <summary>
+        /// Converte uma coleção em um HashSet.
+        /// </summary>
+        /// <typeparam name="T">O tipo de dados da chave da HashTable.</typeparam>
+        /// <param name="enumerable">A coleção a ser convertida.</param>
+        /// <returns>Um HashSet contendo os elementos da coleção.</returns>
+        public static DataStructures.Hashs.HashSet<T> ToHashSet<T>(this IEnumerable<T> enumerable)
+        {
+            var hashTable = new DataStructures.Hashs.HashSet<T>();
+            foreach (var item in enumerable)
+                hashTable.Add(item);
+
+            return hashTable;
+        }
+
+        /// <summary>
         /// Converte uma coleção em uma lista encadeada.
         /// </summary>
         /// <typeparam name="T">O tipo de dados dos elementos da lista.</typeparam>
