@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -165,40 +165,67 @@ namespace DataStructures.Hashs
 
         public IEnumerator<T> GetEnumerator()
         {
-            return new HashSetEnumerable<T>(_set);
+            return new HashSetEnumerable<T>(_set, _count);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return new HashSetEnumerable<T>(_set);
+            return new HashSetEnumerable<T>(_set, _count);
         }
 
         private class HashSetEnumerable<Type> : IEnumerator<Type>
         {
-            private readonly HashSetBucket<T>[] _set;
+            private int _index = -1;
 
-            public HashSetEnumerable(HashSetBucket<T>[] set)
+            private HashSetBucketNode<Type> _current = default;
+            private HashSetBucket<Type>? _bucket = default;
+
+            private readonly HashSetBucket<Type>[] _set;
+            private readonly int _currentSize;
+            public HashSetEnumerable(HashSetBucket<Type>[] set, int currentSize)
             {
                 _set = set;
+                _currentSize = currentSize;
             }
 
-            public Type Current => throw new NotImplementedException();
-
-            object IEnumerator.Current => throw new NotImplementedException();
+            public Type Current => _current.Item;
+            object IEnumerator.Current => Current;
 
             public void Dispose()
             {
-                throw new NotImplementedException();
+                _bucket = default;
             }
 
             public bool MoveNext()
             {
-                throw new NotImplementedException();
+                //se não tem nó atual, procura pelo próximo
+                if (_current?.Next == null && _index < _currentSize)
+                {
+                    //remove bucket atual
+                    _bucket = null;
+
+                    //busca próximo bucket
+                    while (_bucket == null && _index < _set.Length - 1)
+                    {
+                        _index++;
+                        _bucket = _set[_index];
+                    }
+
+                    //chegou ao último bucket possível
+                    if (_set.Length - 1 == _index && _bucket == null)
+                        return false;
+                }
+
+                //se o próximo item do ponteiro atual for nulo, busca do head do próximo bucket, caso contrário mantém o próximo item
+                _current = _current?.Next == null ? _bucket.Head : _current.Next;
+
+                //se atingiu a quantidade máxima de registros, encerra o interator
+                return _index < _currentSize;
             }
 
             public void Reset()
             {
-                throw new NotImplementedException();
+                _index = -1;
             }
         }
     }

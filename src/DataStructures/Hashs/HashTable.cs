@@ -174,12 +174,12 @@ namespace DataStructures.Hashs
         #region Enumerable
         public IEnumerator<HashTableItem<TKey, TValue>> GetEnumerator()
         {
-            return new HashTableEnumerator<TKey, TValue>(_table);
+            return new HashTableEnumerator<TKey, TValue>(_table, _count);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return new HashTableEnumerator<TKey, TValue>(_table);
+            return new HashTableEnumerator<TKey, TValue>(_table, _count);
         }
 
         private class HashTableEnumerator<TypeKey, TypeValue> : IEnumerator<HashTableItem<TypeKey, TypeValue>>
@@ -189,9 +189,11 @@ namespace DataStructures.Hashs
             private HashBucket<TypeKey, TypeValue>? _bucket = default;
 
             private readonly HashBucket<TypeKey, TypeValue>[] _table;
-            public HashTableEnumerator(HashBucket<TypeKey, TypeValue>[] table)
+            private readonly int _currentSize;
+            public HashTableEnumerator(HashBucket<TypeKey, TypeValue>[] table, int currentSize)
             {
                 _table = table;
+                _currentSize = currentSize;
             }
 
             public HashTableItem<TypeKey, TypeValue> Current => new(_current.Key, _current.Item);
@@ -205,18 +207,29 @@ namespace DataStructures.Hashs
 
             public bool MoveNext()
             {
-                if (_current == null && _index < _table.Length)
+                //se não tem nó atual, procura pelo próximo
+                if (_current?.Next == null && _index < _currentSize)
                 {
-                    while (_bucket == null && _index < _table.Length)
+                    //remove bucket atual
+                    _bucket = null;
+
+                    //busca próximo bucket
+                    while (_bucket == null && _index < _table.Length - 1)
                     {
                         _index++;
                         _bucket = _table[_index];
                     }
+
+                    //chegou ao último bucket possível
+                    if (_table.Length - 1 == _index && _bucket == null)
+                        return false;
                 }
 
-                _current = _current == null ? _bucket.Head : _current.Next;
+                //se o próximo item do ponteiro atual for nulo, busca do head do próximo bucket, caso contrário mantém o próximo item
+                _current = _current?.Next == null ? _bucket.Head : _current.Next;
 
-                return _index < _table.Length;
+                //se atingiu a quantidade máxima de registros, encerra o interator
+                return _index < _currentSize;
             }
 
             public void Reset()
