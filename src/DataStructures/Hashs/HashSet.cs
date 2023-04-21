@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -14,6 +14,7 @@ namespace DataStructures.Hashs
     {
         private int _count = 0;
         private readonly HashSetBucket<T>[] _set;
+        private readonly IEqualityComparer<T> _comparer = EqualityComparer<T>.Default;
 
         /// <summary>
         /// Inicializa uma nova instância da classe <see cref="HashSet{T}"/>.
@@ -28,6 +29,26 @@ namespace DataStructures.Hashs
         public HashSet(int capacity)
         {
             _set = new HashSetBucket<T>[capacity];
+        }
+
+        /// <summary>
+        /// Inicializa uma nova instância da classe <see cref="HashSet{T}"/>.
+        /// </summary>
+        /// <param name="equalityComparer">Implementação de um comparador <see cref="IEqualityComparer{T}"/> para permitir comparação entre elementos.</param>
+        public HashSet(IEqualityComparer<T> equalityComparer)
+        {
+            _comparer = equalityComparer;
+        }
+
+        /// <summary>
+        /// Inicializa uma nova instância da classe <see cref="HashSet{T}"/>.
+        /// </summary>
+        /// <param name="capacity">Capacidade de armazenamento do HashSet.</param>
+        /// <param name="equalityComparer">Implementação de um comparador <see cref="IEqualityComparer{T}"/> para permitir comparação entre elementos.</param>
+        public HashSet(int capacity, IEqualityComparer<T> equalityComparer)
+        {
+            _set = new HashSetBucket<T>[capacity];
+            _comparer = equalityComparer;
         }
 
         /// <summary>
@@ -91,7 +112,7 @@ namespace DataStructures.Hashs
 
             foreach (var bucketItem in bucket)
             {
-                if (bucketItem.GetHashCode() == item.GetHashCode())
+                if(_comparer.Equals(bucketItem, item)) 
                     return true;
             }
 
@@ -120,7 +141,7 @@ namespace DataStructures.Hashs
             int count = 0;
             foreach (var value in bucket)
             {
-                if (value.Equals(item))
+                if (_comparer.Equals(value, item))
                 {
                     bucket.Remove(item);
                     removed = true;
@@ -238,6 +259,8 @@ namespace DataStructures.Hashs
     [DebuggerDisplay("Count = {Count}")]
     public sealed class HashSetBucket<T> : IEnumerable<T>
     {
+        private readonly IEqualityComparer<T> _comparer = EqualityComparer<T>.Default;
+
         private int _count = 0;
         private HashSetBucketNode<T> _head;
         private HashSetBucketNode<T> _tail;
@@ -254,6 +277,26 @@ namespace DataStructures.Hashs
         public HashSetBucket(T item)
         {
             Initialize(item);
+        }
+
+        /// <summary>
+        /// Inicializa uma nova instância da classe <see cref="HashSetBucket{T}"/> com uma implementação de um comparador <see cref="IEqualityComparer{T}"/>.
+        /// </summary>
+        /// <param name="equalityComparer">Implementação de um comparador <see cref="IEqualityComparer{T}"/> para permitir comparação entre elementos.</param>
+        public HashSetBucket(IEqualityComparer<T> equalityComparer)
+        {
+            _comparer = equalityComparer;
+        }
+
+        /// <summary>
+        /// Inicializa uma nova instância da classe <see cref="HashSetBucket{T}"/> com um item inicial e uma implementação de um comparador <see cref="IEqualityComparer{T}"/>.
+        /// </summary>
+        /// <param name="item">Item a ser armazenado.</param>
+        /// <param name="equalityComparer">Implementação de um comparador <see cref="IEqualityComparer{T}"/> para permitir comparação entre elementos.</param>
+        public HashSetBucket(T item, IEqualityComparer<T> equalityComparer)
+        {
+            Initialize(item);
+            _comparer = equalityComparer;
         }
 
         /// <summary>
@@ -317,8 +360,8 @@ namespace DataStructures.Hashs
         public void Remove(T item)
         {
             if (_head.Next == null)
-            {
-                if (!_head.Item.Equals(item))
+            {                
+                if (!_comparer.Equals(_head.Item, item))
                     throw new ArgumentException("O Bucket não contém o item informado!", nameof(item));
 
                 _head = null;
@@ -328,13 +371,13 @@ namespace DataStructures.Hashs
             HashSetBucketNode<T> current = _head;
             HashSetBucketNode<T> previous = default;
 
-            while (!current.Item.Equals(item) && current.Next != null)
+            while (!_comparer.Equals(current.Item, item) && current.Next != null)
             {
                 previous = current;
                 current = current.Next;
             }
 
-            if (!current.Item.Equals(item))
+            if (!_comparer.Equals(current.Item, item))
                 throw new ArgumentException("O Bucket não contém o item informado!", nameof(item));
 
             previous.Next = current.Next;

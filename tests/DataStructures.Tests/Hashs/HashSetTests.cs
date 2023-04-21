@@ -1,11 +1,20 @@
 ﻿using DataStructures.Extensions;
 using DataStructures.Hashs;
+using DataStructures.Tests.Fixtures.EqualityComparer;
 using Xunit;
 
 namespace DataStructures.Tests.Hashs
 {
+    [Collection(nameof(EqualityComparerCollection))]
     public class HashSetTests
     {
+        private readonly EqualityComparerFixture _fixture;
+
+        public HashSetTests(EqualityComparerFixture fixture)
+        {
+            _fixture = fixture;
+        }
+
         #region Add
         [Fact(DisplayName = "Ao adicionar, deve conter o item no hashset")]
         [Trait("HashSet", "Add")]
@@ -151,6 +160,38 @@ namespace DataStructures.Tests.Hashs
 
             //act & assert
             Assert.False(hashSet.Remove(15));
+        }
+        #endregion
+
+        #region Equality Comparision
+        [Fact(DisplayName = "Ao buscar registro, deve retornar true")]
+        [Trait("HashSet", "Contains")]
+        public void Contains_EqualityComparerCorreto_DeveRetornarTrue()
+        {
+            //arrange
+            var comparer = _fixture.CreateComparerFromExpression<int>((t1, t2) => t1 == t2);
+            var hashSet = new HashSet<int>(1) { 12 };
+
+            //act & assert
+            var exist = hashSet.Contains(12);
+            Assert.True(exist);
+            Assert.Contains(12, hashSet, comparer);
+            Assert.True(hashSet.Remove(12));
+        }
+
+        [Fact(DisplayName = "Ao buscar registro, deve retornar false")]
+        [Trait("HashSet", "Contains")]
+        public void Contains_EqualityComparerErrado_DeveRetornarFalse()
+        {
+            //arrange
+            var comparer = _fixture.CreateComparerFromExpression<int>((t1, t2) => t1 == (t2 + 2));
+            var hashSet = new HashSet<int>(1, comparer) { 12 };
+
+            //act & assert
+            var exist = hashSet.Contains(12);
+            Assert.False(exist);
+            Assert.DoesNotContain(12, hashSet, comparer);
+            Assert.False(hashSet.Remove(12));
         }
         #endregion
 
