@@ -27,6 +27,9 @@ namespace DataStructures.Hashs
         /// <param name="capacity">Tamanho da HashTable.</param>
         public HashTable(int capacity)
         {
+            if (capacity <= 0)
+                throw new ArgumentOutOfRangeException(nameof(capacity), "Capacidade inválida!");
+
             _table = new HashBucket<TKey, TValue>[capacity];
         }
 

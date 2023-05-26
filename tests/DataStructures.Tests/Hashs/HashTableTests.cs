@@ -204,22 +204,22 @@ namespace DataStructures.Tests.Hashs
         {
             //arrange
             //any non-sense data, just to make it works
-            var lista = new System.Collections.Generic.List<ItemTest<int>> {
-                new ItemTest<int>("Brazil", 20),
-                new ItemTest<int>("Canada", 15),
-                new ItemTest<int>("Korea", 2),
-                new ItemTest<int>("China", 5)
+            var lista = new System.Collections.Generic.List<CountryTest> {
+                new CountryTest("Brazil", 20),
+                new CountryTest("Canada", 15),
+                new CountryTest("Korea", 2),
+                new CountryTest("China", 5)
             };
 
             //act
-            var hashTable = lista.ToHashTable((item) => item.Key);
+            var hashTable = lista.ToHashTable(key => key.Name);
 
             //assert
             Assert.Equal(lista.Count, hashTable.Count);
 
             foreach (var item in lista)
             {
-                Assert.Equal(item.Value, hashTable.Get(item.Key).Value);
+                Assert.Equal(item.Rank, hashTable.Get(item.Name).Rank);
             }
         }
 
@@ -229,36 +229,62 @@ namespace DataStructures.Tests.Hashs
         {
             //arrange
             //any non-sense data, just to make it works
-            var lista = new System.Collections.Generic.List<ItemTest<int>> {
-                new ItemTest<int>("Brazil", 20),
-                new ItemTest<int>("Canada", 15),
-                new ItemTest<int>("Korea", 2),
-                new ItemTest<int>("China", 5)
+            var lista = new System.Collections.Generic.List<CountryTest> {
+                new CountryTest("Brazil", 20),
+                new CountryTest("Canada", 15),
+                new CountryTest("Korea", 2),
+                new CountryTest("China", 5)
             };
 
             //act
-            var hashTable = lista.ToHashTable((k) => k.Key, (v) => v.Value);
+            var hashTable = lista.ToHashTable(key => key.Name, val => val.Rank);
 
             //assert
             Assert.Equal(lista.Count, hashTable.Count);
 
             foreach (var item in lista)
             {
-                Assert.Equal(item.Value, hashTable.Get(item.Key));
+                Assert.Equal(item.Rank, hashTable.Get(item.Name));
             }
-        }
-
-        private class ItemTest<T>
-        {
-            public ItemTest(string key, T value)
-            {
-                Key = key;
-                Value = value;
-            }
-
-            public string Key { get; set; }
-            public T Value { get; set; }
         }
         #endregion
+
+        #region Constructor
+        [Fact(DisplayName = "Ao instanciar com capacidade negativa, deve retornar exception")]
+        [Trait("HashTable", "Constructor")]
+        public void Instanciar_HashTableComCapacidadeNegativa_DeveRetornarException()
+        {
+            //arrange & act & assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => new HashTable<string, int>(-1));
+        }
+
+        [Fact(DisplayName = "Ao instanciar com capacidade zerada, deve retornar exception")]
+        [Trait("HashTable", "Constructor")]
+        public void Instanciar_HashTableComCapacidadeZerada_DeveRetornarException()
+        {
+            //arrange & act & assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => new HashTable<string, int>(0));
+        }
+
+        [Fact(DisplayName = "Ao instanciar com capacidade positiva, não deve retornar exception")]
+        [Trait("HashTable", "Constructor")]
+        public void Instanciar_HashTableComCapacidadePositiva_DeveRetornarException()
+        {
+            //arrange & act & assert
+            _ = new HashTable<string, int>(10);
+        }
+        #endregion
+
+        private class CountryTest
+        {
+            public CountryTest(string key, int value)
+            {
+                Name = key;
+                Rank = value;
+            }
+
+            public string Name { get; set; }
+            public int Rank { get; set; }
+        }
     }
 }
