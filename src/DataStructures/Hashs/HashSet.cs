@@ -28,6 +28,9 @@ namespace DataStructures.Hashs
         /// <param name="capacity">Capacidade de armazenamento do HashSet.</param>
         public HashSet(int capacity)
         {
+            if (capacity <= 0)
+                throw new ArgumentOutOfRangeException(nameof(capacity), "Capacidade inválida!");
+
             _set = new HashSetBucket<T>[capacity];
         }
 
@@ -47,6 +50,9 @@ namespace DataStructures.Hashs
         /// <param name="equalityComparer">Implementação de um comparador <see cref="IEqualityComparer{T}"/> para permitir comparação entre elementos.</param>
         public HashSet(int capacity, IEqualityComparer<T> equalityComparer)
         {
+            if (capacity <= 0)
+                throw new ArgumentOutOfRangeException(nameof(capacity), "Capacidade inválida!");
+
             _set = new HashSetBucket<T>[capacity];
             _comparer = equalityComparer;
         }
@@ -339,6 +345,7 @@ namespace DataStructures.Hashs
             }
 
             _tail.Next = new HashSetBucketNode<T>(item);
+            _tail = _tail.Next;
             _count++;
         }
 

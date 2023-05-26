@@ -1,6 +1,7 @@
 ﻿using DataStructures.Extensions;
 using DataStructures.Hashs;
 using DataStructures.Tests.Fixtures.EqualityComparer;
+using System;
 using Xunit;
 
 namespace DataStructures.Tests.Hashs
@@ -214,6 +215,44 @@ namespace DataStructures.Tests.Hashs
             {
                 Assert.True(hashSet.Contains(item));
             }
+        }
+        #endregion
+
+        #region Constructor
+        [Fact(DisplayName = "Ao instanciar com capacidade negativa, deve retornar exception")]
+        [Trait("HashSet", "Constructor")]
+        public void Instanciar_HashSetComCapacidadeNegativa_DeveRetornarException()
+        {
+            //arrange
+            var comparer = _fixture.CreateComparerFromExpression<string>((t1, t2) => t1 == t2);
+
+            //act & assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => new HashSet<string>(-1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new HashSet<string>(-1, comparer));
+        }
+
+        [Fact(DisplayName = "Ao instanciar com capacidade zerada, deve retornar exception")]
+        [Trait("HashSet", "Constructor")]
+        public void Instanciar_HashSetComCapacidadeZerada_DeveRetornarException()
+        {
+            //arrange
+            var comparer = _fixture.CreateComparerFromExpression<string>((t1, t2) => t1 == t2);
+
+            //act & assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => new HashSet<string>(0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new HashSet<string>(0, comparer));
+        }
+
+        [Fact(DisplayName = "Ao instanciar com capacidade positiva, não deve retornar exception")]
+        [Trait("HashSet", "Constructor")]
+        public void Instanciar_HashSetComCapacidadePositiva_DeveRetornarException()
+        {
+            //arrange
+            var comparer = _fixture.CreateComparerFromExpression<string>((t1, t2) => t1 == t2);
+
+            //act & assert
+            _ = new HashSet<string>(10);
+            _ = new HashSet<string>(10, comparer);
         }
         #endregion
     }
