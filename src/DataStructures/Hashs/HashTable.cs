@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -297,6 +297,7 @@ namespace DataStructures.Hashs
             }
 
             _tail.Next = new HashBucketNode<TKey, TValue>(key, value);
+            _tail = _tail.Next;
             _count++;
         }
 
