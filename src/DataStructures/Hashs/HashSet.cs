@@ -12,6 +12,8 @@ namespace DataStructures.Hashs
     [DebuggerDisplay("Count = {Count}")]    
     public class HashSet<T> : ICollection<T>
     {
+        private const int DEFAULT_CAPACITY = 10;
+
         private int _count = 0;
         private readonly HashSetBucket<T>[] _set;
         private readonly IEqualityComparer<T> _comparer = EqualityComparer<T>.Default;
@@ -20,7 +22,7 @@ namespace DataStructures.Hashs
         /// Inicializa uma nova instância da classe <see cref="HashSet{T}"/>.
         /// </summary>
         /// <param name="size">Tamanho do HashSet.</param>
-        public HashSet() : this(10) { }
+        public HashSet() : this(DEFAULT_CAPACITY) { }
 
         /// <summary>
         /// Inicializa uma nova instância da classe <see cref="HashSet{T}"/>.

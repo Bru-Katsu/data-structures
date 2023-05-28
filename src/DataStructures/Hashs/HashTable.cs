@@ -13,13 +13,15 @@ namespace DataStructures.Hashs
     [DebuggerDisplay("Count = {Count}")]
     public class HashTable<TKey, TValue> : IEnumerable<HashTableItem<TKey, TValue>>
     {
+        private const int DEFAULT_CAPACITY = 10;
+
         private int _count = 0;
         private readonly HashBucket<TKey, TValue>[] _table;
 
         /// <summary>
         /// Inicializa uma nova instância da classe <see cref="HashTable{TKey, TValue}"/>.
         /// </summary>
-        public HashTable() : this(10) { }
+        public HashTable() : this(DEFAULT_CAPACITY) { }
 
         /// <summary>
         /// Inicializa uma nova instância da classe <see cref="HashTable{TKey, TValue}"/>.

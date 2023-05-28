@@ -1,5 +1,6 @@
 ﻿using DataStructures.Extensions;
 using DataStructures.Hashs;
+using DataStructures.Tests.TestModels;
 using System;
 using System.Runtime.CompilerServices;
 using Xunit;
@@ -204,11 +205,11 @@ namespace DataStructures.Tests.Hashs
         {
             //arrange
             //any non-sense data, just to make it works
-            var lista = new System.Collections.Generic.List<CountryTest> {
-                new CountryTest("Brazil", 20),
-                new CountryTest("Canada", 15),
-                new CountryTest("Korea", 2),
-                new CountryTest("China", 5)
+            var lista = new System.Collections.Generic.List<CountryModel> {
+                new CountryModel("Brazil", 20),
+                new CountryModel("Canada", 15),
+                new CountryModel("Korea", 2),
+                new CountryModel("China", 5)
             };
 
             //act
@@ -229,11 +230,11 @@ namespace DataStructures.Tests.Hashs
         {
             //arrange
             //any non-sense data, just to make it works
-            var lista = new System.Collections.Generic.List<CountryTest> {
-                new CountryTest("Brazil", 20),
-                new CountryTest("Canada", 15),
-                new CountryTest("Korea", 2),
-                new CountryTest("China", 5)
+            var lista = new System.Collections.Generic.List<CountryModel> {
+                new CountryModel("Brazil", 20),
+                new CountryModel("Canada", 15),
+                new CountryModel("Korea", 2),
+                new CountryModel("China", 5)
             };
 
             //act
@@ -274,17 +275,5 @@ namespace DataStructures.Tests.Hashs
             _ = new HashTable<string, int>(10);
         }
         #endregion
-
-        private class CountryTest
-        {
-            public CountryTest(string key, int value)
-            {
-                Name = key;
-                Rank = value;
-            }
-
-            public string Name { get; set; }
-            public int Rank { get; set; }
-        }
     }
 }
