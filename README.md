@@ -8,6 +8,7 @@ Um repositório para registrar os meus estudos voltados a escrita de estrutura d
 - Tabela Hash (HashTable)
 - HashSet
 - Árvore Binária (BinaryTree)
+- Heap Binário (BinaryHeap)
 ## Descrição
 Cada arquivo contém uma implementação completa de uma das estruturas acima, incluindo uma documentação detalhada das funcionalidades, e também testes unitários.
 ## Objetivo
