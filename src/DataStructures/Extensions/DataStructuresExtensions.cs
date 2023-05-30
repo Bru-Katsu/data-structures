@@ -25,7 +25,7 @@
         /// </summary>
         /// <typeparam name="T">O tipo de dados dos elementos da BinaryTree.</typeparam>
         /// <param name="enumerable">A coleção a ser convertida.</param>
-        /// <returns>Uma BinaryTree contendo os elementos da coleção.</returns>
+        /// <returns>Uma <see cref="DataStructures.Trees.BinaryTree{T}"/> contendo os elementos da coleção.</returns>
         /// <exception cref="ArgumentNullException">Se o item estiver nulo.</exception>
         public static DataStructures.Trees.BinaryTree<T> ToBinaryTree<T>(this IEnumerable<T> enumerable) where T : IComparable<T>
         {
@@ -43,7 +43,7 @@
         /// <typeparam name="TValue">O tipo de dados dos elementos da coleção.</typeparam>
         /// <param name="enumerable">A coleção a ser convertida.</param>
         /// <param name="keySelector">A função que retorna a chave de cada elemento da coleção.</param>
-        /// <returns>Uma HashTable contendo os elementos da coleção.</returns>
+        /// <returns>Uma <see cref="DataStructures.Hashs.HashTable{TKey, TValue}"/>  contendo os elementos da coleção.</returns>
         /// <exception cref="ArgumentNullException">Exceção é lançada se a chave for nula ou em branco.</exception>
         public static DataStructures.Hashs.HashTable<TKey, TValue> ToHashTable<TKey, TValue>(this IEnumerable<TValue> enumerable, Func<TValue, TKey> keySelector)
         {
@@ -66,7 +66,7 @@
         /// <param name="enumerable">A coleção a ser convertida.</param>
         /// <param name="keySelector">A função que retorna a chave de cada elemento da coleção.</param>
         /// <param name="elementSelector">A função que retorna o elemento a ser adicionado na HashTable.</param>
-        /// <returns>Uma HashTable contendo os elementos da coleção.</returns>
+        /// <returns>Uma <see cref="DataStructures.Hashs.HashTable{TKey, TElement}"/> contendo os elementos da coleção.</returns>
         /// <exception cref="ArgumentNullException">Exceção é lançada se a chave for nula ou em branco.</exception>
         public static DataStructures.Hashs.HashTable<TKey, TElement> ToHashTable<TKey, TValue, TElement>(this IEnumerable<TValue> enumerable, Func<TValue, TKey> keySelector, Func<TValue, TElement> elementSelector)
         {
@@ -86,7 +86,7 @@
         /// </summary>
         /// <typeparam name="T">O tipo de dados da chave da HashTable.</typeparam>
         /// <param name="enumerable">A coleção a ser convertida.</param>
-        /// <returns>Um HashSet contendo os elementos da coleção.</returns>
+        /// <returns>Um <see cref="DataStructures.Hashs.HashSet{T}"/> contendo os elementos da coleção.</returns>
         public static DataStructures.Hashs.HashSet<T> ToHashSet<T>(this IEnumerable<T> enumerable)
         {
             var hashTable = new DataStructures.Hashs.HashSet<T>();
@@ -101,7 +101,7 @@
         /// </summary>
         /// <typeparam name="T">O tipo de dados dos elementos da lista.</typeparam>
         /// <param name="enumerable">A coleção a ser convertida.</param>
-        /// <returns>Uma lista encadeada contendo os elementos da coleção.</returns>
+        /// <returns>Uma <see cref="DataStructures.Collections.LinkedList{T}"/> contendo os elementos da coleção.</returns>
         /// <exception cref="ArgumentNullException">Se o item estiver nulo.</exception>
         public static DataStructures.Collections.LinkedList<T> ToSingleLinkedList<T>(this IEnumerable<T> enumerable)
         {
@@ -117,7 +117,7 @@
         /// </summary>
         /// <typeparam name="T">O tipo de dados dos elementos da lista.</typeparam>
         /// <param name="enumerable">A coleção a ser convertida.</param>
-        /// <returns>Uma lista duplamente encadeada contendo os elementos da coleção.</returns>
+        /// <returns>Uma <see cref="DataStructures.Collections.DoubleLinkedList{T}"/> contendo os elementos da coleção.</returns>
         /// <exception cref="ArgumentNullException">Se o item estiver nulo.</exception>
         public static DataStructures.Collections.DoubleLinkedList<T> ToDoublyLinkedList<T>(this IEnumerable<T> enumerable)
         {
@@ -133,7 +133,7 @@
         /// </summary>
         /// <typeparam name="T">O tipo de dados dos elementos da fila.</typeparam>
         /// <param name="enumerable">A coleção a ser convertida.</param>
-        /// <returns>Uma fila contendo os elementos da coleção.</returns>
+        /// <returns>Uma <see cref="DataStructures.Collections.Queue{T}"/> contendo os elementos da coleção.</returns>
         public static DataStructures.Collections.Queue<T> ToQueue<T>(this IEnumerable<T> enumerable)
         {
             var list = new DataStructures.Collections.Queue<T>();
@@ -148,7 +148,7 @@
         /// </summary>
         /// <typeparam name="T">O tipo de dados dos elementos da pilha.</typeparam>
         /// <param name="enumerable">A coleção a ser convertida.</param>
-        /// <returns>Uma pilha contendo os elementos da coleção.</returns>
+        /// <returns>Uma <see cref="DataStructures.Collections.Stack{T}"/> contendo os elementos da coleção.</returns>
         public static DataStructures.Collections.Stack<T> ToStack<T>(this IEnumerable<T> enumerable)
         {
             var list = new DataStructures.Collections.Stack<T>();
