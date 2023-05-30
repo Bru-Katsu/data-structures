@@ -6,6 +6,21 @@
     public static class DataStructuresExtensions
     {
         /// <summary>
+        /// Converte uma coleção em um BinaryHeap.
+        /// </summary>
+        /// <typeparam name="T">O tipo de dados dos elementos do BinaryHeap.</typeparam>
+        /// <param name="enumerable">A coleção a ser convertida.</param>
+        /// <returns>Um <see cref="DataStructures.Trees.BinaryHeap{T}"/> contendo os elementos da coleção.</returns>
+        public static DataStructures.Trees.BinaryHeap<T> ToBinaryHeap<T>(this IEnumerable<T> enumerable) where T : IComparable<T>
+        {
+            var heap = new DataStructures.Trees.BinaryHeap<T>();
+            foreach (var item in enumerable)
+                heap.Add(item);
+
+            return heap;
+        }
+
+        /// <summary>
         /// Converte uma coleção em uma BinaryTree.
         /// </summary>
         /// <typeparam name="T">O tipo de dados dos elementos da BinaryTree.</typeparam>
